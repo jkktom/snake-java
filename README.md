@@ -1,4 +1,10 @@
-#자바 스네이크 게임
+# Snake Game in Java
+
+A classic Snake game implementation in Java with modern features and enhancements.
+
+![Snake Game Screenshot](image.png)
+
+## Features
 
 ## 새로운 자바 프로젝트를 위한 스네이크 게임
 

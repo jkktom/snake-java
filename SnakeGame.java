@@ -24,13 +24,17 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     ArrayList<Tile> snakeBody;
 
     //food
-    Tile food;
+    Tile food1;
+    Tile food2;
     Random random;
 
     //game logic
     int velocityX;
     int velocityY;
     Timer gameLoop;
+    long startTime; // Add start time for duration tracking
+    int food1Score = 0; // Track scores for each food type
+    int food2Score = 0;
 
     boolean gameOver = false;
 
@@ -44,16 +48,23 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
         snakeHead = new Tile(5, 5);
         snakeBody = new ArrayList<Tile>();
+        
+        // Initialize snake with 4 body tiles (total length of 5)
+        for (int i = 0; i < 4; i++) {
+            snakeBody.add(new Tile(4 - i, 5)); // Place body tiles to the left of the head
+        }
 
-        food = new Tile(10, 10);
+        food1 = new Tile(10, 10);
+        food2 = new Tile(15, 15);
         random = new Random();
         placeFood();
 
         velocityX = 1;
         velocityY = 0;
         
-		//game timer
-		gameLoop = new Timer(100, this); //how long it takes to start timer, milliseconds gone between frames 
+        startTime = System.currentTimeMillis(); // Initialize start time
+        //game timer
+        gameLoop = new Timer(100, this); //how long it takes to start timer, milliseconds gone between frames 
         gameLoop.start();
 	}	
     
@@ -72,8 +83,9 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
         //Food
         g.setColor(Color.red);
-        // g.fillRect(food.x*tileSize, food.y*tileSize, tileSize, tileSize);
-        g.fill3DRect(food.x*tileSize, food.y*tileSize, tileSize, tileSize, true);
+        g.fill3DRect(food1.x*tileSize, food1.y*tileSize, tileSize, tileSize, true);
+        g.setColor(Color.orange);
+        g.fill3DRect(food2.x*tileSize, food2.y*tileSize, tileSize, tileSize, true);
 
         //Snake Head
         g.setColor(Color.green);
@@ -92,22 +104,77 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("Arial", Font.PLAIN, 16));
         if (gameOver) {
             g.setColor(Color.red);
-            g.drawString("Game Over: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
+            g.drawString("Game Over!", boardWidth/2 - 50, boardHeight/2 - 60);
+            
+            // Play Summary
+            g.setFont(new Font("Arial", Font.BOLD, 20));
+            g.setColor(Color.white);
+            g.drawString("Play Summary", boardWidth/2 - 70, boardHeight/2 - 30);
+            
+            g.setFont(new Font("Arial", Font.PLAIN, 16));
+            g.drawString("Final Score: " + String.valueOf(snakeBody.size()), boardWidth/2 - 60, boardHeight/2);
+            
+            long currentTime = System.currentTimeMillis();
+            double duration = (currentTime - startTime) / 1000.0; // Convert to seconds with decimal
+            g.drawString(String.format("Time Played: %.2f seconds", duration), boardWidth/2 - 80, boardHeight/2 + 25);
+            
+            // Item Summary
+            g.setColor(Color.white);
+            g.drawString("Item Summary:", boardWidth/2 - 80, boardHeight/2 + 50);
+            
+            // Create visual representation of collected items
+            StringBuilder redItems = new StringBuilder();
+            StringBuilder orangeItems = new StringBuilder();
+            for (int i = 0; i < food1Score; i++) redItems.append("[]");
+            for (int i = 0; i < food2Score; i++) orangeItems.append("[]");
+            
+            g.setColor(Color.red);
+            g.drawString("Red: " + redItems.toString(), boardWidth/2 - 80, boardHeight/2 + 70);
+            
+            g.setColor(Color.orange);
+            g.drawString("Orange: " + orangeItems.toString(), boardWidth/2 - 80, boardHeight/2 + 90);
+            
+            g.setColor(Color.yellow);
+            g.drawString("Press SPACE to restart", boardWidth/2 - 80, boardHeight/2 + 120);
         }
         else {
             g.drawString("Score: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
+
+            // Display time and food scores
+            long currentTime = System.currentTimeMillis();
+            long duration = (currentTime - startTime) / 10; // Convert to split seconds (1/100th of a second)
+            g.setColor(Color.white);
+            g.drawString("Time: " + String.valueOf(duration), boardWidth - 150, tileSize);
+            g.setColor(Color.red);
+            g.drawString("Red: " + String.valueOf(food1Score), boardWidth - 150, tileSize + 20);
+            g.setColor(Color.orange);
+            g.drawString("Orange: " + String.valueOf(food2Score), boardWidth - 150, tileSize + 40);
         }
 	}
 
     public void placeFood(){
-        food.x = random.nextInt(boardWidth/tileSize);
-		food.y = random.nextInt(boardHeight/tileSize);
-	}
+        food1.x = random.nextInt(boardWidth/tileSize);
+        food1.y = random.nextInt(boardHeight/tileSize);
+        food2.x = random.nextInt(boardWidth/tileSize);
+        food2.y = random.nextInt(boardHeight/tileSize);
+        
+        // Make sure food items don't overlap
+        while (collision(food1, food2)) {
+            food2.x = random.nextInt(boardWidth/tileSize);
+            food2.y = random.nextInt(boardHeight/tileSize);
+        }
+    }
 
     public void move() {
         //eat food
-        if (collision(snakeHead, food)) {
-            snakeBody.add(new Tile(food.x, food.y));
+        if (collision(snakeHead, food1)) {
+            snakeBody.add(new Tile(food1.x, food1.y));
+            food1Score++; // Increment red food score
+            placeFood();
+        }
+        else if (collision(snakeHead, food2)) {
+            snakeBody.add(new Tile(food2.x, food2.y));
+            food2Score++; // Increment orange food score
             placeFood();
         }
 
@@ -159,7 +226,26 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // System.out.println("KeyEvent: " + e.getKeyCode());
+        if (gameOver && e.getKeyCode() == KeyEvent.VK_SPACE) {
+            // Reset game
+            snakeHead = new Tile(5, 5);
+            snakeBody = new ArrayList<Tile>();
+            for (int i = 0; i < 4; i++) {
+                snakeBody.add(new Tile(4 - i, 5));
+            }
+            food1 = new Tile(10, 10);
+            food2 = new Tile(15, 15);
+            placeFood();
+            velocityX = 1;
+            velocityY = 0;
+            gameOver = false;
+            startTime = System.currentTimeMillis();
+            food1Score = 0;
+            food2Score = 0;
+            gameLoop.start();
+            return;
+        }
+        
         if (e.getKeyCode() == KeyEvent.VK_UP && velocityY != 1) {
             velocityX = 0;
             velocityY = -1;

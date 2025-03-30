@@ -22,10 +22,11 @@
 - Enhanced UI to show current game mode (AI/Manual)
 - Added welcome message with control instructions
 
+
 ## Random Obstacles Feature
-### commit: Pending
+### commit: added to below
 - Added random obstacle generation system
-- Obstacles spawn when collecting food (15% chance)
+- Obstacles spawn when collecting food (15% chance) (to 100 to make game end quick)
 - Maximum of 10 obstacles on the board
 - Enhanced AI to avoid obstacles and find safe paths
 - Updated UI to show obstacle count
@@ -33,3 +34,14 @@
 - Improved food placement to avoid obstacles
 
 
+
+
+## Username Requirement and Obstacle Settings
+### commit: bd507e1
+- Enforced mandatory username input before game start
+- Added validation for empty or whitespace-only usernames
+- Added exit confirmation when no username provided
+- Increased maximum obstacles to 50 (from 10)
+- Modified obstacle spawn chance
+- Added obstacle count display in game UI
+- Enhanced game over screen with obstacle statistics

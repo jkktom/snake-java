@@ -3,6 +3,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     public static class Tile {
@@ -48,6 +50,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     int velocityY;
     Timer gameLoop;
     long startTime;
+    LocalDateTime endTime;
     int food1Score = 0;
     int food2Score = 0;
 
@@ -56,6 +59,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     // Add AI controller and player name
     private SnakeAI ai;
     private String playerName;
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     SnakeGame(int boardWidth, int boardHeight) {
         this.boardWidth = boardWidth;
@@ -178,9 +182,12 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             double duration = (currentTime - startTime) / 1000.0;
             g.drawString(String.format("Time Played: %.2f seconds", duration), boardWidth/2 - 80, boardHeight/2 + 25);
             
+            // End time
+            g.drawString("Game Ended: " + endTime.format(timeFormatter), boardWidth/2 - 80, boardHeight/2 + 45);
+            
             // Item Summary
             g.setColor(Color.white);
-            g.drawString("Item Summary:", boardWidth/2 - 80, boardHeight/2 + 50);
+            g.drawString("Item Summary:", boardWidth/2 - 80, boardHeight/2 + 70);
             
             StringBuilder redItems = new StringBuilder();
             StringBuilder orangeItems = new StringBuilder();
@@ -188,16 +195,16 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             for (int i = 0; i < food2Score; i++) orangeItems.append("[]");
             
             g.setColor(Color.red);
-            g.drawString("Red: " + redItems.toString(), boardWidth/2 - 80, boardHeight/2 + 70);
+            g.drawString("Red: " + redItems.toString(), boardWidth/2 - 80, boardHeight/2 + 90);
             
             g.setColor(Color.orange);
-            g.drawString("Orange: " + orangeItems.toString(), boardWidth/2 - 80, boardHeight/2 + 90);
+            g.drawString("Orange: " + orangeItems.toString(), boardWidth/2 - 80, boardHeight/2 + 110);
             
             g.setColor(Color.gray);
-            g.drawString("Obstacles: " + obstacles.size(), boardWidth/2 - 80, boardHeight/2 + 110);
+            g.drawString("Obstacles: " + obstacles.size(), boardWidth/2 - 80, boardHeight/2 + 130);
             
             g.setColor(Color.yellow);
-            g.drawString("Press SPACE to restart", boardWidth/2 - 80, boardHeight/2 + 130);
+            g.drawString("Press SPACE to restart", boardWidth/2 - 80, boardHeight/2 + 150);
         } else {
             g.setColor(Color.white);
             g.drawString(playerName + "'s Score: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
@@ -314,6 +321,27 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             snakeHead.y*tileSize < 0 || snakeHead.y*tileSize > boardHeight ) {
             gameOver = true;
         }
+        
+        // Record end time and create game result when game is over
+        if (gameOver && endTime == null) {
+            endTime = LocalDateTime.now();
+            double duration = (System.currentTimeMillis() - startTime) / 1000.0;
+            GameResult result = new GameResult(
+                playerName,
+                snakeBody.size(),
+                food1Score,
+                food2Score,
+                obstacles.size(),
+                duration,
+                endTime,
+                ai.isEnabled()
+            );
+            // Display the game summary
+            JOptionPane.showMessageDialog(null, 
+                result.getFormattedSummary(),
+                "Game Summary",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public boolean collision(Tile tile1, Tile tile2) {
@@ -389,6 +417,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         velocityY = 0;
         gameOver = false;
         startTime = System.currentTimeMillis();
+        endTime = null;  // Reset end time
         food1Score = 0;
         food2Score = 0;
         

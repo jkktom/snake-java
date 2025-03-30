@@ -5,7 +5,7 @@ import java.util.Random;
 import javax.swing.*;
 
 public class SnakeGame extends JPanel implements ActionListener, KeyListener {
-    private class Tile {
+    public static class Tile {
         int x;
         int y;
 
@@ -37,6 +37,9 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     int food2Score = 0;
 
     boolean gameOver = false;
+    
+    // Add AI controller
+    private SnakeAI ai;
 
     SnakeGame(int boardWidth, int boardHeight) {
         this.boardWidth = boardWidth;
@@ -66,6 +69,9 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         //game timer
         gameLoop = new Timer(100, this); //how long it takes to start timer, milliseconds gone between frames 
         gameLoop.start();
+        
+        // Initialize AI
+        ai = new SnakeAI(this);
 	}	
     
     public void paintComponent(Graphics g) {
@@ -216,7 +222,10 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) { //called every x milliseconds by gameLoop timer
+    public void actionPerformed(ActionEvent e) {
+        if (ai.isEnabled()) {
+            ai.makeMove();
+        }
         move();
         repaint();
         if (gameOver) {
@@ -226,42 +235,54 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (gameOver && e.getKeyCode() == KeyEvent.VK_SPACE) {
-            // Reset game
-            snakeHead = new Tile(5, 5);
-            snakeBody = new ArrayList<Tile>();
-            for (int i = 0; i < 4; i++) {
-                snakeBody.add(new Tile(4 - i, 5));
-            }
-            food1 = new Tile(10, 10);
-            food2 = new Tile(15, 15);
-            placeFood();
-            velocityX = 1;
-            velocityY = 0;
-            gameOver = false;
-            startTime = System.currentTimeMillis();
-            food1Score = 0;
-            food2Score = 0;
-            gameLoop.start();
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && gameOver) {
+            resetGame();
             return;
         }
         
-        if (e.getKeyCode() == KeyEvent.VK_UP && velocityY != 1) {
-            velocityX = 0;
-            velocityY = -1;
+        // Toggle AI with 'A' key
+        if (e.getKeyCode() == KeyEvent.VK_A) {
+            ai.toggle();
+            return;
         }
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN && velocityY != -1) {
-            velocityX = 0;
-            velocityY = 1;
+        
+        // Only process movement keys if AI is not enabled
+        if (!ai.isEnabled()) {
+            if (e.getKeyCode() == KeyEvent.VK_UP && velocityY != 1) {
+                velocityX = 0;
+                velocityY = -1;
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_DOWN && velocityY != -1) {
+                velocityX = 0;
+                velocityY = 1;
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_LEFT && velocityX != 1) {
+                velocityX = -1;
+                velocityY = 0;
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_RIGHT && velocityX != -1) {
+                velocityX = 1;
+                velocityY = 0;
+            }
         }
-        else if (e.getKeyCode() == KeyEvent.VK_LEFT && velocityX != 1) {
-            velocityX = -1;
-            velocityY = 0;
+    }
+
+    private void resetGame() {
+        snakeHead = new Tile(5, 5);
+        snakeBody = new ArrayList<Tile>();
+        for (int i = 0; i < 4; i++) {
+            snakeBody.add(new Tile(4 - i, 5));
         }
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT && velocityX != -1) {
-            velocityX = 1;
-            velocityY = 0;
-        }
+        food1 = new Tile(10, 10);
+        food2 = new Tile(15, 15);
+        placeFood();
+        velocityX = 1;
+        velocityY = 0;
+        gameOver = false;
+        startTime = System.currentTimeMillis();
+        food1Score = 0;
+        food2Score = 0;
+        gameLoop.start();
     }
 
     //not needed

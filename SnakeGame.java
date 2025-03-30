@@ -13,6 +13,15 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             this.x = x;
             this.y = y;
         }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Tile) {
+                Tile other = (Tile) obj;
+                return this.x == other.x && this.y == other.y;
+            }
+            return false;
+        }
     }  
 
     // Make these package-private so AI can access them
@@ -28,6 +37,11 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     Tile food1;
     Tile food2;
     Random random;
+    
+    //obstacles
+    ArrayList<Tile> obstacles;
+    private static final int MAX_OBSTACLES = 50;
+    private static final int OBSTACLE_SPAWN_CHANCE = 101; // percentage chance per food collection
 
     //game logic
     int velocityX;
@@ -47,10 +61,29 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
         
-        // Get player name
-        playerName = JOptionPane.showInputDialog(null, "Enter your name:", "Snake Game", JOptionPane.QUESTION_MESSAGE);
-        if (playerName == null || playerName.trim().isEmpty()) {
-            playerName = "Player";
+        // Get player name and validate
+        playerName = null;
+        while (playerName == null || playerName.trim().isEmpty()) {
+            playerName = JOptionPane.showInputDialog(null, 
+                "Enter your name to start the game:", 
+                "Snake Game", 
+                JOptionPane.QUESTION_MESSAGE);
+            
+            if (playerName == null) {
+                JOptionPane.showMessageDialog(null, 
+                    "Game cannot start without a player name.\nExiting game.", 
+                    "Game Exit", 
+                    JOptionPane.WARNING_MESSAGE);
+                System.exit(0);
+            }
+            
+            playerName = playerName.trim();
+            if (playerName.isEmpty()) {
+                JOptionPane.showMessageDialog(null, 
+                    "Please enter a valid name.", 
+                    "Invalid Name", 
+                    JOptionPane.WARNING_MESSAGE);
+            }
         }
         
         setPreferredSize(new Dimension(this.boardWidth, this.boardHeight));
@@ -60,6 +93,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
         snakeHead = new Tile(5, 5);
         snakeBody = new ArrayList<Tile>();
+        obstacles = new ArrayList<Tile>();
         
         for (int i = 0; i < 4; i++) {
             snakeBody.add(new Tile(4 - i, 5));
@@ -79,14 +113,15 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         
         // Initialize AI and enable by default
         ai = new SnakeAI(this);
-        ai.toggle(); // Enable AI by default
+        ai.toggle();
         
         // Show initial message about controls
         JOptionPane.showMessageDialog(null, 
             "Welcome " + playerName + "!\n" +
             "AI is enabled by default.\n" +
             "Press 'A' to disable AI and play manually.\n" +
-            "Use arrow keys when playing manually.",
+            "Use arrow keys when playing manually.\n" +
+            "Watch out for obstacles that appear when collecting food!",
             "Game Controls",
             JOptionPane.INFORMATION_MESSAGE);
     }
@@ -101,6 +136,12 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         for(int i = 0; i < boardWidth/tileSize; i++) {
             g.drawLine(i*tileSize, 0, i*tileSize, boardHeight);
             g.drawLine(0, i*tileSize, boardWidth, i*tileSize); 
+        }
+
+        //Obstacles
+        g.setColor(Color.gray);
+        for (Tile obstacle : obstacles) {
+            g.fill3DRect(obstacle.x*tileSize, obstacle.y*tileSize, tileSize, tileSize, true);
         }
 
         //Food
@@ -152,12 +193,16 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.orange);
             g.drawString("Orange: " + orangeItems.toString(), boardWidth/2 - 80, boardHeight/2 + 90);
             
+            g.setColor(Color.gray);
+            g.drawString("Obstacles: " + obstacles.size(), boardWidth/2 - 80, boardHeight/2 + 110);
+            
             g.setColor(Color.yellow);
-            g.drawString("Press SPACE to restart", boardWidth/2 - 80, boardHeight/2 + 120);
+            g.drawString("Press SPACE to restart", boardWidth/2 - 80, boardHeight/2 + 130);
         } else {
             g.setColor(Color.white);
             g.drawString(playerName + "'s Score: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
             g.drawString("Mode: " + (ai.isEnabled() ? "AI" : "Manual"), tileSize - 16, tileSize * 2);
+            g.drawString("Obstacles: " + obstacles.size(), tileSize - 16, tileSize * 3);
 
             // Display time and food scores
             long currentTime = System.currentTimeMillis();
@@ -171,16 +216,49 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public void placeFood(){
+    public void placeFood() {
         food1.x = random.nextInt(boardWidth/tileSize);
         food1.y = random.nextInt(boardHeight/tileSize);
         food2.x = random.nextInt(boardWidth/tileSize);
         food2.y = random.nextInt(boardHeight/tileSize);
         
-        // Make sure food items don't overlap
-        while (collision(food1, food2)) {
+        // Make sure food items don't overlap with each other, snake, or obstacles
+        while (collision(food1, food2) || isOnSnake(food1) || isOnSnake(food2) || 
+               isOnObstacle(food1) || isOnObstacle(food2)) {
             food2.x = random.nextInt(boardWidth/tileSize);
             food2.y = random.nextInt(boardHeight/tileSize);
+        }
+    }
+    
+    private boolean isOnSnake(Tile tile) {
+        if (collision(tile, snakeHead)) return true;
+        for (Tile bodyPart : snakeBody) {
+            if (collision(tile, bodyPart)) return true;
+        }
+        return false;
+    }
+    
+    private boolean isOnObstacle(Tile tile) {
+        for (Tile obstacle : obstacles) {
+            if (collision(tile, obstacle)) return true;
+        }
+        return false;
+    }
+    
+    private void trySpawnObstacle() {
+        if (obstacles.size() >= MAX_OBSTACLES) return;
+        
+        if (random.nextInt(100) < OBSTACLE_SPAWN_CHANCE) {
+            Tile newObstacle;
+            do {
+                newObstacle = new Tile(
+                    random.nextInt(boardWidth/tileSize),
+                    random.nextInt(boardHeight/tileSize)
+                );
+            } while (isOnSnake(newObstacle) || isOnObstacle(newObstacle) || 
+                     collision(newObstacle, food1) || collision(newObstacle, food2));
+            
+            obstacles.add(newObstacle);
         }
     }
 
@@ -188,19 +266,21 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         //eat food
         if (collision(snakeHead, food1)) {
             snakeBody.add(new Tile(food1.x, food1.y));
-            food1Score++; // Increment red food score
+            food1Score++;
+            trySpawnObstacle();
             placeFood();
         }
         else if (collision(snakeHead, food2)) {
             snakeBody.add(new Tile(food2.x, food2.y));
-            food2Score++; // Increment orange food score
+            food2Score++;
+            trySpawnObstacle();
             placeFood();
         }
 
         //move snake body
         for (int i = snakeBody.size()-1; i >= 0; i--) {
             Tile snakePart = snakeBody.get(i);
-            if (i == 0) { //right before the head
+            if (i == 0) {
                 snakePart.x = snakeHead.x;
                 snakePart.y = snakeHead.y;
             }
@@ -210,22 +290,28 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
                 snakePart.y = prevSnakePart.y;
             }
         }
+        
         //move snake head
         snakeHead.x += velocityX;
         snakeHead.y += velocityY;
 
-        //game over conditions
+        //check collisions
         for (int i = 0; i < snakeBody.size(); i++) {
             Tile snakePart = snakeBody.get(i);
-
-            //collide with snake head
             if (collision(snakeHead, snakePart)) {
                 gameOver = true;
             }
         }
+        
+        // Check obstacle collision
+        for (Tile obstacle : obstacles) {
+            if (collision(snakeHead, obstacle)) {
+                gameOver = true;
+            }
+        }
 
-        if (snakeHead.x*tileSize < 0 || snakeHead.x*tileSize > boardWidth || //passed left border or right border
-            snakeHead.y*tileSize < 0 || snakeHead.y*tileSize > boardHeight ) { //passed top border or bottom border
+        if (snakeHead.x*tileSize < 0 || snakeHead.x*tileSize > boardWidth || 
+            snakeHead.y*tileSize < 0 || snakeHead.y*tileSize > boardHeight ) {
             gameOver = true;
         }
     }
@@ -292,6 +378,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
         snakeHead = new Tile(5, 5);
         snakeBody = new ArrayList<Tile>();
+        obstacles = new ArrayList<Tile>();
         for (int i = 0; i < 4; i++) {
             snakeBody.add(new Tile(4 - i, 5));
         }
@@ -320,3 +407,4 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {}
 }
+

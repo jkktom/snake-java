@@ -21,11 +21,8 @@ public class SnakeAI {
         int headX = game.snakeHead.x;
         int headY = game.snakeHead.y;
         
-        // Choose the closest food
-        int food1Distance = Math.abs(headX - game.food1.x) + Math.abs(headY - game.food1.y);
-        int food2Distance = Math.abs(headX - game.food2.x) + Math.abs(headY - game.food2.y);
-        
-        SnakeGame.Tile targetFood = (food1Distance <= food2Distance) ? game.food1 : game.food2;
+        // Choose the closest food that can be reached safely
+        SnakeGame.Tile targetFood = findBestFood();
         
         // Calculate direction to food while avoiding obstacles
         int newVelocityX = 0;
@@ -66,6 +63,50 @@ public class SnakeAI {
         }
     }
 
+    private SnakeGame.Tile findBestFood() {
+        int headX = game.snakeHead.x;
+        int headY = game.snakeHead.y;
+        
+        // Calculate distances to both foods
+        int food1Distance = Math.abs(headX - game.food1.x) + Math.abs(headY - game.food1.y);
+        int food2Distance = Math.abs(headX - game.food2.x) + Math.abs(headY - game.food2.y);
+        
+        // Check if path to each food is blocked by obstacles
+        boolean food1Blocked = isPathBlocked(game.food1);
+        boolean food2Blocked = isPathBlocked(game.food2);
+        
+        // Choose the closest unblocked food
+        if (!food1Blocked && !food2Blocked) {
+            return (food1Distance <= food2Distance) ? game.food1 : game.food2;
+        } else if (!food1Blocked) {
+            return game.food1;
+        } else if (!food2Blocked) {
+            return game.food2;
+        }
+        
+        // If both paths are blocked, choose the closest one anyway
+        return (food1Distance <= food2Distance) ? game.food1 : game.food2;
+    }
+    
+    private boolean isPathBlocked(SnakeGame.Tile target) {
+        int headX = game.snakeHead.x;
+        int headY = game.snakeHead.y;
+        
+        // Check for obstacles in the rectangular area between snake and target
+        int minX = Math.min(headX, target.x);
+        int maxX = Math.max(headX, target.x);
+        int minY = Math.min(headY, target.y);
+        int maxY = Math.max(headY, target.y);
+        
+        for (SnakeGame.Tile obstacle : game.obstacles) {
+            if (obstacle.x >= minX && obstacle.x <= maxX && 
+                obstacle.y >= minY && obstacle.y <= maxY) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean canMove(int velocityX, int velocityY) {
         // Check if moving in this direction would cause collision
         int newX = game.snakeHead.x + velocityX;
@@ -80,6 +121,13 @@ public class SnakeAI {
         // Check body collision
         for (SnakeGame.Tile bodyPart : game.snakeBody) {
             if (newX == bodyPart.x && newY == bodyPart.y) {
+                return false;
+            }
+        }
+        
+        // Check obstacle collision
+        for (SnakeGame.Tile obstacle : game.obstacles) {
+            if (newX == obstacle.x && newY == obstacle.y) {
                 return false;
             }
         }

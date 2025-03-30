@@ -14,12 +14,22 @@
 - Organized project milestones
 
 ## Player Name and Default AI Mode
-### commit: Pending
+### commit: 8d64301
 - Added player name input at game start
 - Display player name in game UI and game over screen
 - Made AI mode enabled by default
 - Added option to change player name on restart
 - Enhanced UI to show current game mode (AI/Manual)
 - Added welcome message with control instructions
+
+## Random Obstacles Feature
+### commit: Pending
+- Added random obstacle generation system
+- Obstacles spawn when collecting food (15% chance)
+- Maximum of 10 obstacles on the board
+- Enhanced AI to avoid obstacles and find safe paths
+- Updated UI to show obstacle count
+- Added obstacle collision detection
+- Improved food placement to avoid obstacles
 
 

@@ -22,6 +22,33 @@
 - Enhanced UI to show current game mode (AI/Manual)
 - Added welcome message with control instructions
 
+## Username Requirement and Obstacle Settings
+### commit: bd507e1
+- Enforced mandatory username input before game start
+- Added validation for empty or whitespace-only usernames
+- Added exit confirmation when no username provided
+- Increased maximum obstacles to 50 (from 10)
+- Modified obstacle spawn chance
+- Added obstacle count display in game UI
+- Enhanced game over screen with obstacle statistics
+
+## Game End Time Feature
+### commit: Pending
+- Added timestamp recording when game ends
+- Display formatted end time in game over screen
+- Reset end time when game restarts
+- Adjusted game over screen layout to accommodate new information
+- Added date-time formatting utility
+
+## Game Result Record Implementation
+### commit: 3431b77
+- Converted GameResult to Java Record for immutability
+- Implemented modern Java features
+- Added automatic getter methods
+- Improved data encapsulation
+- Enhanced thread safety
+- Added formatted summary display
+- Integrated with game over screen
 
 ## Random Obstacles Feature
 ### commit: added to below
@@ -32,16 +59,3 @@
 - Updated UI to show obstacle count
 - Added obstacle collision detection
 - Improved food placement to avoid obstacles
-
-
-
-
-## Username Requirement and Obstacle Settings
-### commit: bd507e1
-- Enforced mandatory username input before game start
-- Added validation for empty or whitespace-only usernames
-- Added exit confirmation when no username provided
-- Increased maximum obstacles to 50 (from 10)
-- Modified obstacle spawn chance
-- Added obstacle count display in game UI
-- Enhanced game over screen with obstacle statistics

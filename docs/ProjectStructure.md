@@ -47,6 +47,8 @@ snake-java/
 │   └── main/
 │       └── java/
 │           └── com/
+│               ├── snake/           # Main application package
+│               │   └── App.java     # Application entry point
 │               ├── config/          # Game configurations
 │               │   └── GameConfig   # Snake game settings, board size, speed settings
 │               ├── dao/             # Data persistence
@@ -88,6 +90,8 @@ snake-java/
     - SQL scripts for database initialization
     - Database schema definitions
   - `main/java/com/`: Main application source code
+    - `snake/`: Main application package
+      - `App.java`: Application entry point and game initialization
     - `config/`: Game configuration including board size, speed, and difficulty settings
     - `dao/`: Score, user, and comment data persistence
     - `model/`: Core game entities (Snake, Food, GameResult) and user-related models
@@ -108,12 +112,12 @@ snake-java/
 - Standardized build output directory
 
 ### File Migration Plan
+- Current `App.java` → `snake/App.java` (Main entry point)
 - Current `SnakeGame.java` will be split into:
   - `model/Snake.java`
   - `model/Tile.java`
   - `service/GameService.java`
   - `view/GameBoard.java`
-- Current `App.java` → `view/GameUI.java`
 - Current `SnakeAI.java` → `service/AIService.java`
 - Current `GameResult.java` → `model/GameResult.java`
 - New files to be created:

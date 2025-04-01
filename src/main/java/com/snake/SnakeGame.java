@@ -20,7 +20,8 @@ import java.util.List;
 import javax.swing.*;
 
 public class SnakeGame extends JPanel implements ActionListener, KeyListener {
-    private static final int DELAY = 100;
+    private static final int DELAY = 100;  // 10 FPS for game logic
+    private static final int RENDER_DELAY = 16;  // ~60 FPS for rendering
     
     private final Frame frame;
     private Snake snake;
@@ -39,8 +40,10 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     private SnakeAI snakeAI;
     
     private Timer gameLoop;
+    private Timer renderLoop;
     private boolean gameOver = false;
     private LocalDateTime endTime;
+    private volatile boolean needsRepaint = true;
 
     public SnakeGame(Frame frame, User user) {
         this.frame = frame;
@@ -62,12 +65,32 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         setFocusable(true);
         
+        // Enable double buffering
+        setDoubleBuffered(true);
+        
         // Initialize game state
         resetGame();
         
-        // Start game loop
-        gameLoop = new Timer(DELAY, this);
+        // Start game loop (10 FPS)
+        gameLoop = new Timer(DELAY, e -> {
+            if (!gameOver) {
+                if (snakeAI.isEnabled()) {
+                    snakeAI.makeMove();
+                }
+                move();
+                needsRepaint = true;
+            }
+        });
         gameLoop.start();
+        
+        // Start render loop (60 FPS)
+        renderLoop = new Timer(RENDER_DELAY, e -> {
+            if (needsRepaint) {
+                repaint();
+                needsRepaint = false;
+            }
+        });
+        renderLoop.start();
         
         // Show welcome message
         MessageDisplay.showWelcomeMessage();
@@ -81,6 +104,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         scoreTracker.reset();
         gameOver = false;
         endTime = null;
+        needsRepaint = true;
         
         snakeAI = new SnakeAI(this);
         snakeAI.enableAI();
@@ -90,7 +114,20 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        // Create buffer
+        Image offscreen = createImage(getWidth(), getHeight());
+        if (offscreen == null) {
+            super.paintComponent(g);
+            return;
+        }
+        
+        Graphics offG = offscreen.getGraphics();
+        
+        // Clear background
+        offG.setColor(getBackground());
+        offG.fillRect(0, 0, getWidth(), getHeight());
+        
+        // Render game state
         if (gameOver) {
             GameResult result = new GameResult(
                 1, // playerId
@@ -101,25 +138,23 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
                 endTime,
                 snakeAI.isEnabled()
             );
-            gameOverlay.render(g, result);
+            gameOverlay.render(offG, result);
         } else {
-            gameRenderer.render(g, snake, food1, food2, 
+            gameRenderer.render(offG, snake, food1, food2, 
                               obstacleManager.getObstacles(),
                               user.username(), 
                               snakeAI.isEnabled(),
                               gameOver);
         }
+        
+        // Draw buffer to screen
+        g.drawImage(offscreen, 0, 0, this);
+        offG.dispose();
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!gameOver) {
-            if (snakeAI.isEnabled()) {
-                snakeAI.makeMove();
-            }
-            move();
-            repaint();
-        }
+        // No longer used for game loop
     }
     
     private void move() {
@@ -137,6 +172,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         if (collisionDetector.checkCollision(newHead, snake)) {
             gameOver = true;
             endTime = LocalDateTime.now();
+            needsRepaint = true;
             return;
         }
 
@@ -175,6 +211,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
         if (newDirection != null) {
             snake = snake.setDirection(newDirection);
+            needsRepaint = true;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_A) {
@@ -184,6 +221,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             } else {
                 snakeAI.disableAI();
             }
+            needsRepaint = true;
         }
     }
     
@@ -202,5 +240,6 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     
     public void setSnakeDirection(Direction direction) {
         snake = snake.setDirection(direction);
+        needsRepaint = true;
     }
 } 

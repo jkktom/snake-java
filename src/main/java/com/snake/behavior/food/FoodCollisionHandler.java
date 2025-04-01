@@ -5,10 +5,8 @@ import com.model.Snake;
 import java.awt.Point;
 
 public class FoodCollisionHandler {
-    private final FoodPlacer foodPlacer;
 
     public FoodCollisionHandler(FoodPlacer foodPlacer) {
-        this.foodPlacer = foodPlacer;
     }
 
     public boolean checkFoodCollision(Point newHead, Food food) {

@@ -65,28 +65,104 @@ snake-java/
   - Project history tracking
 
 ### Planned Improvements
-1. Game Logic Separation:
-   - Extract food placement logic to dedicated manager
-   - Create obstacle spawning manager
-   - Separate message handling
-   - Move drawing logic to renderer package
 
-2. Package Structure Enhancement:
-   ```
-   com.snake/
-   ├── game/          # Game mechanics
-   │   ├── FoodManager
-   │   ├── ObstacleManager
-   │   └── MessageManager
-   └── renderer/      # Drawing logic
-       ├── GameRenderer
-       └── UIRenderer
-   ```
+1. Game Behavior Organization:
+```
+com.snake/
+├── behavior/           # Game behavior package
+│   ├── food/          # Food-related behaviors
+│   │   ├── FoodPlacer.java        # Food placement strategy
+│   │   └── FoodCollisionHandler.java # Food collision logic
+│   ├── obstacle/      # Obstacle-related behaviors
+│   │   ├── ObstacleSpawner.java   # Obstacle generation
+│   │   └── ObstacleManager.java   # Obstacle lifecycle
+│   ├── collision/     # Collision detection
+│   │   ├── WallCollision.java     # Wall collision checks
+│   │   ├── SelfCollision.java     # Snake self-collision
+│   │   └── CollisionDetector.java # General collision logic
+│   └── score/         # Score management
+│       ├── ScoreTracker.java      # Score calculation
+│       └── ScoreFormatter.java    # Score display formatting
+├── renderer/          # Visual rendering
+│   ├── GameRenderer.java     # Main game rendering
+│   ├── BoardRenderer.java    # Game board rendering
+│   ├── SnakeRenderer.java    # Snake rendering
+│   ├── FoodRenderer.java     # Food rendering
+│   └── UIRenderer.java       # UI elements rendering
+└── ui/                # User interface
+    ├── message/
+    │   ├── MessageDisplay.java    # Message rendering
+    │   └── WelcomeScreen.java     # Welcome message
+    └── overlay/
+        ├── GameOverlay.java       # Game stats overlay
+        └── ScoreOverlay.java      # Score display
+```
 
-3. Future Considerations:
-   - Database integration (DAO layer)
-   - Service layer for business logic
-   - Enhanced UI components
-   - User management system
+### Behavior Package Details
+
+1. `food` Package:
+   - `FoodPlacer`: Handles food placement logic
+     - Ensures food doesn't spawn on snake or obstacles
+     - Manages multiple food items
+     - Implements placement strategies
+   - `FoodCollisionHandler`: Manages food collection
+     - Detects food collection
+     - Triggers snake growth
+     - Updates score
+
+2. `obstacle` Package:
+   - `ObstacleSpawner`: Controls obstacle creation
+     - Random spawn timing
+     - Position validation
+     - Difficulty-based spawning
+   - `ObstacleManager`: Manages obstacles
+     - Tracks active obstacles
+     - Removes old obstacles
+     - Validates obstacle positions
+
+3. `collision` Package:
+   - `WallCollision`: Border collision detection
+   - `SelfCollision`: Snake self-intersection
+   - `CollisionDetector`: Central collision logic
+     - Combines all collision checks
+     - Provides unified collision API
+
+4. `score` Package:
+   - `ScoreTracker`: Score management
+     - Tracks current score
+     - Handles different scoring rules
+   - `ScoreFormatter`: Score presentation
+     - Formats scores for display
+     - Handles high score presentation
+
+5. `renderer` Package:
+   - Separates all drawing logic
+   - Each component has dedicated renderer
+   - Consistent styling and animations
+   - Efficient rendering with dirty regions
+
+6. `ui` Package:
+   - Organized user interface elements
+   - Centralized message handling
+   - Consistent overlay management
+   - Screen-specific components
+
+### Benefits of New Structure
+1. Clear Separation of Concerns:
+   - Each behavior in dedicated package
+   - Easy to modify individual components
+   - Better testability
+   
+2. Improved Maintainability:
+   - Focused class responsibilities
+   - Reduced coupling
+   - Easy to add new features
+
+3. Better Organization:
+   - Logical grouping of related code
+   - Clear file naming conventions
+   - Structured package hierarchy
+
+Would you like me to proceed with implementing any of these packages?
 
 Note: This structure represents the current state after the Gradle integration and model class implementation. Further improvements will be documented as they are implemented. 

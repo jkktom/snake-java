@@ -25,4 +25,8 @@ public enum Direction {
             case RIGHT -> LEFT;
         };
     }
+    
+    public boolean isOpposite(Direction other) {
+        return this.opposite() == other;
+    }
 } 

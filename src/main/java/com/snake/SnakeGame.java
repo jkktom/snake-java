@@ -3,6 +3,7 @@ package com.snake;
 import com.model.*;
 import com.model.Frame;
 import com.snake.behavior.collision.CollisionDetector;
+import com.snake.behavior.collision.CollisionDetector.CollisionResult;
 import com.snake.behavior.food.FoodPlacer;
 import com.snake.behavior.food.FoodCollisionHandler;
 import com.snake.behavior.obstacle.ObstacleManager;
@@ -169,7 +170,8 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         );
 
         // Check collisions
-        if (collisionDetector.checkCollision(newHead, snake)) {
+        CollisionResult collision = collisionDetector.checkCollision(newHead, snake);
+        if (collision.hasCollision()) {
             gameOver = true;
             endTime = LocalDateTime.now();
             needsRepaint = true;

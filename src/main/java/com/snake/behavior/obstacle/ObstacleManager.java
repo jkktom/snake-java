@@ -22,8 +22,8 @@ public class ObstacleManager {
     }
 
     private void spawnBorderObstacles() {
-        int width = frame.width() / TILE_SIZE;
-        int height = frame.height() / TILE_SIZE;
+        int width = getWidth();
+        int height = getHeight();
 
         // Add top and bottom borders
         for (int x = 0; x < width; x++) {
@@ -56,6 +56,14 @@ public class ObstacleManager {
 
     public void clear() {
         obstacles.clear();
-        spawnBorderObstacles();  // Respawn border obstacles after clearing
+        spawnBorderObstacles();
+    }
+
+    public int getWidth() {
+        return frame.width() / TILE_SIZE;
+    }
+
+    public int getHeight() {
+        return frame.height() / TILE_SIZE;
     }
 } 

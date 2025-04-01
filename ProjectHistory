@@ -116,3 +116,31 @@
   - Comment: User feedback and game comments
 - All models created with proper encapsulation and immutability where appropriate
 - Models designed for future database integration
+
+[Commit: 16535d0e2a9a006de283143e017d7c6893d45d6d]
+## Gradle Integration and Model Classes Enhancement
+- Converted project to use Gradle build system
+- Implemented immutable model classes:
+  - Snake: Now returns new instances for state changes
+  - Direction: Added isOpposite() for movement validation
+  - Frame: Handles game window dimensions
+  - Comment: Simplified to four core fields
+- Enhanced SnakeGame with proper movement logic:
+  - Wall collision detection
+  - Obstacle collision detection
+  - Self collision detection
+  - Food collection and growth
+- Improved SnakeAI implementation:
+  - Better pathfinding logic
+  - Obstacle avoidance
+  - Self-collision prevention
+  - Enable/disable controls
+- Added App class as main entry point
+- Project now builds and runs with Gradle
+- All game features working:
+  - Continuous snake movement
+  - Arrow key controls
+  - AI toggle (A key)
+  - Food collection and growth
+  - Collision detection
+  - Game over and reset

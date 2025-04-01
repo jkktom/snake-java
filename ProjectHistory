@@ -59,3 +59,40 @@
 - Updated UI to show obstacle count
 - Added obstacle collision detection
 - Improved food placement to avoid obstacles
+
+[Commit: 4e0af01457c1339a60f65987b1471f4a3148ddd4]
+- Renamed ProjectOverview file to ProjectHistory for better clarity
+- Cleaned up old build artifacts from out/production directory to maintain consistency
+
+## Project Structure Documentation
+- Created docs/ProjectStructure.md to document the original project layout
+- Documented current file organization and structure before reorganization
+- Added detailed tree view of the project hierarchy
+
+[Commit: b086d98a38b91c79164a2f676935a8e9caa0e628]
+## Project Structure Enhancement
+- Created comprehensive project structure documentation
+- Added new directory structure plan with:
+  - Database source files directory (DB_source)
+  - User and Comment entities in model layer
+  - Complete service layer with user management
+  - Data access objects for persistence
+  - Enhanced view components for user interaction
+- Documented detailed file migration plan
+- Added schema and initialization SQL file placeholders
+
+[Commit: eda3a07f016cf8e7a2b2ef1e5fd112a108943982]
+## App Location Update
+- Relocated App.java to dedicated snake package (com.snake.App)
+- Established proper main entry point structure
+- Removed incorrect plan to move App.java to view layer
+- App.class will be built to build/com/snake/App.class
+
+## Directory Structure Creation
+- Created all planned directories without moving files:
+  - src/DB_source for database files
+  - src/main/java/com/* for Java packages
+  - docs/ for documentation
+  - resources/images/ for assets
+- Project remains functional with original files in place
+- Prepared for gradual file migration

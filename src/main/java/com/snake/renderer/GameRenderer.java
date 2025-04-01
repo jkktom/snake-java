@@ -8,6 +8,9 @@ import java.awt.Color;
 import java.util.List;
 
 public class GameRenderer {
+    private static final int TILE_SIZE = 20;
+    private static final Color OBSTACLE_COLOR = Color.GRAY;
+    
     private final SnakeRenderer snakeRenderer;
     private final BoardRenderer boardRenderer;
     private final FoodRenderer foodRenderer;
@@ -32,9 +35,9 @@ public class GameRenderer {
         
         // Draw obstacles
         for (Obstacle obstacle : obstacles) {
-            g.setColor(Color.RED);
-            g.fillRect(obstacle.getPosition().x * 20, 
-                      obstacle.getPosition().y * 20, 20, 20);
+            g.setColor(OBSTACLE_COLOR);
+            g.fillRect(obstacle.getPosition().x * TILE_SIZE, 
+                      obstacle.getPosition().y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
         
         // Draw UI elements

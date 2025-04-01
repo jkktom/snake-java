@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class FoodPlacer {
+    private static final int TILE_SIZE = 20;
     private final Random random;
     private final Frame frame;
 
@@ -21,8 +22,8 @@ public class FoodPlacer {
         Point position;
         do {
             position = new Point(
-                random.nextInt(frame.width()),
-                random.nextInt(frame.height())
+                random.nextInt(frame.width() / TILE_SIZE),
+                random.nextInt(frame.height() / TILE_SIZE)
             );
         } while (isInvalidPosition(position, snake, obstacles, otherFood));
 

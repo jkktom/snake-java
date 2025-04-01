@@ -1,0 +1,164 @@
+# Project Evolution Documentation
+
+## AI Implementation 
+### commit: 78f6190a0a34e922e22c9ed68b53da948f231d5e
+- Added autonomous snake movement with intelligent pathfinding
+- Implemented collision avoidance system
+- Created toggle mechanism for AI control (A key)
+- Added comprehensive AI documentation at ./AI_DOCUMENTATION
+
+## Add Evolution Document
+### commit: f39c64e037cd2ce26085fd54c71a913da6256c14
+- Added project evolution tracking
+- Documented commit history
+- Organized project milestones
+
+## Player Name and Default AI Mode
+### commit: 8d64301
+- Added player name input at game start
+- Display player name in game UI and game over screen
+- Made AI mode enabled by default
+- Added option to change player name on restart
+- Enhanced UI to show current game mode (AI/Manual)
+- Added welcome message with control instructions
+
+## Username Requirement and Obstacle Settings
+### commit: bd507e1
+- Enforced mandatory username input before game start
+- Added validation for empty or whitespace-only usernames
+- Added exit confirmation when no username provided
+- Increased maximum obstacles to 50 (from 10)
+- Modified obstacle spawn chance
+- Added obstacle count display in game UI
+- Enhanced game over screen with obstacle statistics
+
+## Game End Time Feature
+### commit: Pending
+- Added timestamp recording when game ends
+- Display formatted end time in game over screen
+- Reset end time when game restarts
+- Adjusted game over screen layout to accommodate new information
+- Added date-time formatting utility
+
+## Game Result Record Implementation
+### commit: 3431b77
+- Converted GameResult to Java Record for immutability
+- Implemented modern Java features
+- Added automatic getter methods
+- Improved data encapsulation
+- Enhanced thread safety
+- Added formatted summary display
+- Integrated with game over screen
+
+## Random Obstacles Feature
+### commit: added to below
+- Added random obstacle generation system
+- Obstacles spawn when collecting food (15%~ 100% chance)
+- Maximum of 10 obstacles on the board
+- Enhanced AI to avoid obstacles and find safe paths
+- Updated UI to show obstacle count
+- Added obstacle collision detection
+- Improved food placement to avoid obstacles
+
+[Commit: 4e0af01457c1339a60f65987b1471f4a3148ddd4]
+- Renamed ProjectOverview file to ProjectHistory for better clarity
+- Cleaned up old build artifacts from out/production directory to maintain consistency
+
+## Project Structure Documentation
+- Created docs/ProjectStructure.md to document the original project layout
+- Documented current file organization and structure before reorganization
+- Added detailed tree view of the project hierarchy
+
+[Commit: b086d98a38b91c79164a2f676935a8e9caa0e628]
+## Project Structure Enhancement
+- Created comprehensive project structure documentation
+- Added new directory structure plan with:
+  - Database source files directory (DB_source)
+  - User and Comment entities in model layer
+  - Complete service layer with user management
+  - Data access objects for persistence
+  - Enhanced view components for user interaction
+- Documented detailed file migration plan
+- Added schema and initialization SQL file placeholders
+
+[Commit: eda3a07f016cf8e7a2b2ef1e5fd112a108943982]
+## App Location Update
+- Relocated App.java to dedicated snake package (com.snake.App)
+- Established proper main entry point structure
+- Removed incorrect plan to move App.java to view layer
+- App.class will be built to build/com/snake/App.class
+
+## Directory Structure Creation
+- Created all planned directories without moving files:
+  - src/DB_source for database files
+  - src/main/java/com/* for Java packages
+  - docs/ for documentation
+  - resources/images/ for assets
+- Project remains functional with original files in place
+- Prepared for gradual file migration
+
+## Project Restructuring Branch
+- Created new branch 'restructure-project' for safe refactoring
+- Will implement directory structure changes here
+- Plan to merge back to master when restructuring is complete and tested
+- Allows for safe rollback if needed
+
+[Commit: ec8a22e]
+## Model Classes Creation
+- Created core game model classes:
+  - Snake: Main snake entity with movement and AI status
+  - GameResult: Record for game outcome data
+  - Food: Food entity with position and value
+  - Tile: Enum for board tile types
+  - Direction: Enum for movement directions
+- Added user-related models:
+  - User: Player profile with game history
+  - Comment: User feedback and game comments
+- All models created with proper encapsulation and immutability where appropriate
+- Models designed for future database integration
+
+[Commit: 16535d0e2a9a006de283143e017d7c6893d45d6d]
+## Gradle Integration and Model Classes Enhancement
+- Converted project to use Gradle build system
+- Implemented immutable model classes:
+  - Snake: Now returns new instances for state changes
+  - Direction: Added isOpposite() for movement validation
+  - Frame: Handles game window dimensions
+  - Comment: Simplified to four core fields
+- Enhanced SnakeGame with proper movement logic:
+  - Wall collision detection
+  - Obstacle collision detection
+  - Self collision detection
+  - Food collection and growth
+- Improved SnakeAI implementation:
+  - Better pathfinding logic
+  - Obstacle avoidance
+  - Self-collision prevention
+  - Enable/disable controls
+- Added App class as main entry point
+- Project now builds and runs with Gradle
+- All game features working:
+  - Continuous snake movement
+  - Arrow key controls
+  - AI toggle (A key)
+  - Food collection and growth
+  - Collision detection
+  - Game over and reset
+
+## Behavior Package Implementation and Border Enhancement
+### commit: Pending
+- Implemented behavior package structure:
+  - Collision detection with ObstacleManager integration
+  - Food placement and collision handling
+  - Obstacle spawning and management
+  - Score tracking
+- Added border obstacles:
+  - Automatic border generation at game start
+  - Removed wall collision checks (handled by border obstacles)
+  - Fixed grid-based food and obstacle placement
+  - Removed obstacle spawn limit for continuous challenge
+- Enhanced code organization:
+  - Removed unnecessary dependencies
+  - Improved separation of concerns
+  - Better encapsulation of game mechanics
+  - Consistent grid size across components

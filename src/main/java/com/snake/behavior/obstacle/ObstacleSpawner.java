@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class ObstacleSpawner {
-    private static final double SPAWN_CHANCE = 0.15; // 15% chance to spawn
-    private static final int MAX_OBSTACLES = 50;
+    private static final int TILE_SIZE = 20;
     
     private final Random random;
     private final Frame frame;
@@ -20,20 +19,16 @@ public class ObstacleSpawner {
         this.random = new Random();
     }
 
-    public boolean shouldSpawnObstacle() {
-        return random.nextDouble() < SPAWN_CHANCE;
+    public Frame getFrame() {
+        return frame;
     }
 
     public Obstacle spawnObstacle(Snake snake, List<Obstacle> obstacles, Food food1, Food food2) {
-        if (obstacles.size() >= MAX_OBSTACLES) {
-            return null;
-        }
-
         Point position;
         do {
             position = new Point(
-                random.nextInt(frame.width()),
-                random.nextInt(frame.height())
+                random.nextInt(frame.width() / TILE_SIZE),
+                random.nextInt(frame.height() / TILE_SIZE)
             );
         } while (isInvalidPosition(position, snake, obstacles, food1, food2));
 

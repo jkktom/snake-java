@@ -1,7 +1,7 @@
 package com.snake;
 
 import com.model.Direction;
-import com.model.Food;
+//import com.model.Food;
 import com.model.Obstacle;
 import java.awt.Point;
 

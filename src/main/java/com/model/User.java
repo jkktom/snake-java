@@ -1,40 +1,29 @@
 package com.model;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class User {
-    private Long id;
-    private String username;
-    private String email;
-    private LocalDateTime createdAt;
-    private List<GameResult> gameHistory;
-    
-    public User(String username, String email) {
-        this.username = username;
-        this.email = email;
-        this.createdAt = LocalDateTime.now();
-        this.gameHistory = new ArrayList<>();
+public record User(
+    int id,
+    String username,
+    List<GameResult> gameHistory
+) {
+    public User {
+        gameHistory = new ArrayList<>(gameHistory); // Defensive copy
     }
     
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public User(String username) {
+        this(0, username, new ArrayList<>());
+    }
     
     public List<GameResult> getGameHistory() {
-        return new ArrayList<>(gameHistory);
+        return Collections.unmodifiableList(gameHistory);
     }
     
-    public void addGameResult(GameResult result) {
-        gameHistory.add(result);
+    public User addGameResult(GameResult result) {
+        List<GameResult> newHistory = new ArrayList<>(gameHistory);
+        newHistory.add(result);
+        return new User(id, username, newHistory);
     }
 } 

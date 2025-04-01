@@ -53,7 +53,7 @@
 ## Random Obstacles Feature
 ### commit: added to below
 - Added random obstacle generation system
-- Obstacles spawn when collecting food (15% chance) (to 100 to make game end quick)
+- Obstacles spawn when collecting food (15%~ 100% chance)
 - Maximum of 10 obstacles on the board
 - Enhanced AI to avoid obstacles and find safe paths
 - Updated UI to show obstacle count

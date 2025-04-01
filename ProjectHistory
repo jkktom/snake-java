@@ -96,3 +96,9 @@
   - resources/images/ for assets
 - Project remains functional with original files in place
 - Prepared for gradual file migration
+
+## Project Restructuring Branch
+- Created new branch 'restructure-project' for safe refactoring
+- Will implement directory structure changes here
+- Plan to merge back to master when restructuring is complete and tested
+- Allows for safe rollback if needed

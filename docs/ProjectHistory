@@ -172,3 +172,32 @@
 - Smoother game performance
 - Removed unnecessary static fields
 - Better code organization in collision package
+
+## Basic Command Application and DB Connection (WIP)
+### commit: Pending
+- Implemented basic command-line interface in Application.java
+- Added menu system for:
+  - User management
+  - Game result management
+  - Comment management
+- Started database connection implementation:
+  - Added HikariCP for connection pooling
+  - Created config.properties structure
+  - Database initialization pending
+- Created View classes:
+  - UserView for user management
+  - GameResultView for game records
+  - CommentView for comment system
+- Service layer implementation:
+  - UserService with basic operations
+  - GameResultService for game records
+  - CommentService for comment management
+- DAO layer structure:
+  - UserDao for user data access
+  - GameResultDao for game results
+  - CommentDao for comments
+- All components use Korean interface
+- Database connection WIP:
+  - Configuration structure ready
+  - Tables and schema pending
+  - Connection pooling configured

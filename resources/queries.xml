@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+    <!-- User -->
+    <query id="getAllUsers">
+        SELECT * FROM users
+    </query>
+    <query id="getUserById">
+        SELECT * FROM users WHERE id = ?
+    </query>
+    <query id="getUserByUsername">
+        SELECT * FROM users WHERE username = ?
+    </query>
+
+    <!-- GameResult -->
+    <query id="getAllGameResults">
+        SELECT * FROM game_results ORDER BY end_time DESC
+    </query>
+    <query id="getGameResultById">
+        SELECT * FROM game_results WHERE id = ?
+    </query>
+    <query id="getAllGameResultsByUserId">
+        SELECT * FROM game_results 
+        WHERE user_id = ? 
+        ORDER BY end_time DESC
+    </query>
+    <query id="getAllGameResultsByUsername">
+        SELECT * FROM game_results WHERE username = ?
+    </query>
+
+    <!-- Comment -->
+    <query id="getAllComments">
+        SELECT * FROM comments ORDER BY created_at DESC
+    </query>
+    <query id="getCommentById">
+        SELECT * FROM comments WHERE id = ?
+    </query>
+    <query id="getAllCommentsByUserId">
+        SELECT * FROM comments 
+        WHERE user_id = ? 
+        ORDER BY created_at DESC
+    </query>
+    <query id="getAllCommentsByUsername">
+        SELECT * FROM comments WHERE username = ?
+    </query>
+    <query id="addComment">
+        INSERT INTO comments (user_id, game_result_id, content) 
+        VALUES (?, ?, ?)
+    </query>
+    
+
+</queries>

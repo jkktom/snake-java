@@ -1,121 +1,66 @@
 # Project Structure Documentation
 
-## Current Structure (After Behavior Implementation)
+## Current Structure (After Basic Command Implementation)
 
 ```
 snake-java/
 ├── src/
 │   └── main/
-│       └── java/
-│           └── com/
-│               ├── snake/           # Main game package
-│               │   ├── App.java     # Application entry point
-│               │   ├── SnakeGame.java # Game panel and core logic
-│               │   ├── SnakeAI.java  # AI implementation
-│               │   ├── behavior/    # Game behaviors
-│               │   │   ├── collision/
-│               │   │   │   └── CollisionDetector.java
-│               │   │   ├── food/
-│               │   │   │   ├── FoodPlacer.java
-│               │   │   │   └── FoodCollisionHandler.java
-│               │   │   ├── obstacle/
-│               │   │   │   ├── ObstacleManager.java
-│               │   │   │   └── ObstacleSpawner.java
-│               │   │   └── score/
-│               │   │       └── ScoreTracker.java
-│               │   ├── renderer/    # Visual components
-│               │   │   ├── GameRenderer.java
-│               │   │   ├── BoardRenderer.java
-│               │   │   ├── SnakeRenderer.java
-│               │   │   ├── FoodRenderer.java
-│               │   │   └── UIRenderer.java
-│               │   └── ui/         # User interface
-│               │       ├── message/
-│               │       │   └── MessageDisplay.java
-│               │       └── overlay/
-│               │           └── GameOverlay.java
-│               └── model/          # Game models
-│                   ├── Snake.java  # Snake entity
-│                   ├── Direction.java # Movement directions
-│                   ├── Food.java   # Food entity
-│                   ├── Frame.java  # Window dimensions
-│                   ├── GameResult.java # Game outcome
-│                   ├── Obstacle.java # Obstacle entity
-│                   ├── Comment.java  # User comments
-│                   ├── Tile.java    # Board tiles
-│                   └── User.java    # User profile
-├── gradle/
-│   └── wrapper/
-├── build/
+│       ├── java/
+│       │   └── com/
+│       │       ├── config/         # Configuration
+│       │       │   └── JDBCConnection.java
+│       │       ├── dao/           # Data Access Objects
+│       │       │   ├── UserDao.java
+│       │       │   ├── GameResultDao.java
+│       │       │   └── CommentDao.java
+│       │       ├── service/       # Service Layer
+│       │       │   ├── UserService.java
+│       │       │   ├── GameResultService.java
+│       │       │   └── CommentService.java
+│       │       ├── view/          # View Layer
+│       │       │   ├── UserView.java
+│       │       │   ├── GameResultView.java
+│       │       │   └── CommentView.java
+│       │       ├── snake/         # Game Components
+│       │       │   └── [existing game structure]
+│       │       ├── model/         # Data Models
+│       │       │   └── [existing models]
+│       │       └── Application.java # Main Entry Point
+│       └── resources/
+│           ├── config.properties  # Database Config
+│           └── queries.xml        # SQL Queries
 ├── docs/
-├── resources/
-├── .gradle/
-├── build.gradle
-├── settings.gradle
-└── README.md
+│   ├── ProjectHistory
+│   └── ProjectStructure.md
+└── [existing structure]
 ```
 
 ### Current Implementation Status
 
-1. Behavior Package (Implemented):
-   - Collision detection with obstacle integration
-   - Food placement and collision handling
-   - Obstacle spawning with border generation
-   - Score tracking system
-
-2. Renderer Package (Implemented):
-   - Game board and elements rendering
-   - Snake and food visualization
-   - UI elements display
-   - Game over overlay
-
-3. UI Package (Implemented):
-   - Message display system
-   - Game overlay with statistics
-   - Welcome screen
-
-4. Model Package (Implemented):
-   - Immutable game entities
-   - Direction and movement logic
-   - Game result tracking
-   - User profile management
-
-### Key Features
-1. Border Obstacles:
-   - Automatic generation at game start
-   - Replaces wall collision detection
-   - Consistent grid-based placement
-
-2. Food System:
-   - Grid-aligned placement
-   - Collision detection
-   - Score tracking for different food types
-
-3. Obstacle Management:
-   - Dynamic obstacle spawning
-   - No maximum limit
-   - Border and internal obstacles
-
-4. Rendering:
-   - Consistent grid size (20px)
-   - Clear visual hierarchy
-   - Efficient updates
-
-### Future Improvements
-1. Additional Features:
-   - Power-ups and special food types
-   - Different obstacle patterns
-   - Advanced scoring mechanics
-
-2. Technical Enhancements:
+1. Database Layer (In Progress):
+   - Connection pooling with HikariCP
+   - Basic DAO structure
+   - Query management with XML
    - Configuration system
-   - Save/load game state
-   - Leaderboard system
 
-3. UI Improvements:
-   - Enhanced visual effects
-   - Sound effects
-   - Settings menu
+2. Service Layer (Implemented):
+   - User management
+   - Game result tracking
+   - Comment system
+   - Error handling
+
+3. View Layer (Implemented):
+   - Korean interface
+   - Command-line menus
+   - User interaction
+   - Data display
+
+4. Configuration (In Progress):
+   - Database properties
+   - Connection pooling settings
+   - Query management
+   - Resource loading
 
 ### Current Structure Overview
 - Source code organization:

@@ -1,0 +1,31 @@
+Table users {
+  id integer [primary key, increment]
+  username varchar [not null, unique]
+}
+
+Table gameResults {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  food1Score integer [default: 0]
+  food2Score integer [default: 0]
+  obstacleCount integer [default: 0]
+  gameDuration integer [not null]
+  endTime timestamp [not null]
+  wasAIEnabled boolean [default: false]
+  
+  indexes {
+    (user_id) [name: 'idx_user_games'] // For fast game history lookup per user
+  }
+}
+
+Table comments {
+  id integer [primary key, increment]
+  game_result_id integer [not null]
+  user_id integer [not null]
+  content text [not null]
+}
+
+// Define relationships
+Ref: "users"."id" < "gameResults"."user_id"
+Ref: "gameResults"."id" < "comments"."game_result_id"
+Ref: "users"."id" < "comments"."user_id"

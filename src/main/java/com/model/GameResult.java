@@ -1,14 +1,13 @@
 package com.model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 public record GameResult(
-    int playerId,
+    int userId,
     int food1Score,
     int food2Score,
     int obstacleCount,
-    Duration gameDuration,
+    long gameDuration,
     LocalDateTime endTime,
     boolean wasAIEnabled
 ) {
@@ -19,7 +18,7 @@ public record GameResult(
         if (obstacleCount < 0) {
             throw new IllegalArgumentException("Obstacle count cannot be negative");
         }
-        if (gameDuration.isNegative()) {
+        if (gameDuration < 0) {
             throw new IllegalArgumentException("Game duration cannot be negative");
         }
     }
@@ -29,15 +28,15 @@ public record GameResult(
     }
     
     public String getFormattedDuration() {
-        long minutes = gameDuration.toMinutes();
-        long seconds = gameDuration.minusMinutes(minutes).getSeconds();
+        long minutes = gameDuration / (60 * 1000);
+        long seconds = (gameDuration / 1000) % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
     
     public String getFormattedSummary() {
         return String.format(
             "Player ID: %d | Score (Food1: %d, Food2: %d) | Obstacles: %d | Time: %s | AI: %s",
-            playerId, food1Score, food2Score, obstacleCount, getFormattedDuration(), 
+            userId, food1Score, food2Score, obstacleCount, getFormattedDuration(), 
             wasAIEnabled ? "Yes" : "No"
         );
     }

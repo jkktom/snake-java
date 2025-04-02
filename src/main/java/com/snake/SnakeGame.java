@@ -47,6 +47,13 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     private volatile boolean needsRepaint = true;
 
     public SnakeGame(Frame frame, User user) {
+        if (frame == null) {
+            throw new IllegalArgumentException("Frame cannot be null");
+        }
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        
         this.frame = frame;
         this.user = user;
         
@@ -115,14 +122,20 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        if (g == null) return;
+        
         // Create buffer
         Image offscreen = createImage(getWidth(), getHeight());
         if (offscreen == null) {
-            super.paintComponent(g);
             return;
         }
         
         Graphics offG = offscreen.getGraphics();
+        if (offG == null) {
+            return;
+        }
         
         // Clear background
         offG.setColor(getBackground());
@@ -135,7 +148,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
                 scoreTracker.getFood1Score(),
                 scoreTracker.getFood2Score(),
                 obstacleManager.getObstacles().size(),
-                Duration.ofMillis(scoreTracker.getGameDuration()),
+                scoreTracker.getGameDuration(),
                 endTime,
                 snakeAI.isEnabled()
             );

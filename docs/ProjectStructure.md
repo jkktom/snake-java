@@ -1,66 +1,105 @@
 # Project Structure Documentation
 
-## Current Structure (After Basic Command Implementation)
+## Current Structure (After View Enhancement and DB Connection Implementation)
 
 ```
 snake-java/
 ├── src/
-│   └── main/
-│       ├── java/
-│       │   └── com/
-│       │       ├── config/         # Configuration
-│       │       │   └── JDBCConnection.java
-│       │       ├── dao/           # Data Access Objects
-│       │       │   ├── UserDao.java
-│       │       │   ├── GameResultDao.java
-│       │       │   └── CommentDao.java
-│       │       ├── service/       # Service Layer
-│       │       │   ├── UserService.java
-│       │       │   ├── GameResultService.java
-│       │       │   └── CommentService.java
-│       │       ├── view/          # View Layer
-│       │       │   ├── UserView.java
-│       │       │   ├── GameResultView.java
-│       │       │   └── CommentView.java
-│       │       ├── snake/         # Game Components
-│       │       │   └── [existing game structure]
-│       │       ├── model/         # Data Models
-│       │       │   └── [existing models]
-│       │       └── Application.java # Main Entry Point
-│       └── resources/
-│           ├── config.properties  # Database Config
-│           └── queries.xml        # SQL Queries
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       ├── config/         # Configuration
+│   │   │       │   └── JDBCConnection.java
+│   │   │       ├── dao/           # Data Access Objects
+│   │   │       │   ├── UserDao.java
+│   │   │       │   ├── GameResultDao.java
+│   │   │       │   └── CommentDao.java
+│   │   │       ├── service/       # Service Layer
+│   │   │       │   ├── UserService.java
+│   │   │       │   ├── GameResultService.java
+│   │   │       │   └── CommentService.java
+│   │   │       ├── view/          # View Layer
+│   │   │       │   ├── UserView.java
+│   │   │       │   ├── GameResultView.java
+│   │   │       │   └── CommentView.java
+│   │   │       ├── util/          # Utilities
+│   │   │       │   └── QueryUtil.java
+│   │   │       ├── snake/         # Game Components
+│   │   │       │   └── [existing game structure]
+│   │   │       ├── model/         # Data Models
+│   │   │       │   ├── User.java
+│   │   │       │   ├── GameResult.java
+│   │   │       │   ├── Comment.java
+│   │   │       │   └── [other models]
+│   │   │       └── Application.java # Main Entry Point
+│   │   └── resources/
+│   │       ├── config.properties  # Database Config
+│   │       ├── queries.xml        # SQL Queries
+│   │       └── logback.xml        # Logging Config
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── config/
+│                   └── JDBCConnectionTest.java
+├── DB_source/                     # Database Scripts
+│   ├── SNAKE_GAME_Database_Creation.sql
+│   └── TableSpec
 ├── docs/
 │   ├── ProjectHistory
-│   └── ProjectStructure.md
-└── [existing structure]
+│   ├── ProjectStructure.md
+│   └── DATABASE_STATUS.md
+├── build.gradle                   # Gradle Build Config
+└── .gitignore
+
 ```
 
 ### Current Implementation Status
 
-1. Database Layer (In Progress):
-   - Connection pooling with HikariCP
-   - Basic DAO structure
-   - Query management with XML
-   - Configuration system
+1. Database Layer (Implemented):
+   - Connection pooling with HikariCP (4.0.3)
+   - Comprehensive DAO implementations
+   - Query management with XML and fallbacks
+   - Configuration system with validation
+   - Proper error handling in Korean
 
 2. Service Layer (Implemented):
-   - User management
+   - User management with validation
    - Game result tracking
    - Comment system
-   - Error handling
+   - Error handling and logging
 
-3. View Layer (Implemented):
-   - Korean interface
-   - Command-line menus
-   - User interaction
-   - Data display
+3. View Layer (Enhanced):
+   - Korean interface with emojis
+   - Improved error messages
+   - Better input validation
+   - Resource cleanup
+   - Retry mechanisms
+   - Status feedback
 
-4. Configuration (In Progress):
-   - Database properties
-   - Connection pooling settings
-   - Query management
-   - Resource loading
+4. Configuration (Implemented):
+   - Database properties management
+   - Connection pool settings
+   - Query management with fallbacks
+   - Logging configuration
+   - Resource validation
+
+5. Testing (Started):
+   - JDBCConnection tests
+   - Connection validation tests
+   - Resource cleanup verification
+
+### Build System
+- Gradle integration complete
+- Dependencies:
+  - HikariCP 4.0.3
+  - MySQL Connector/J 8.3.0
+  - SLF4J Simple 2.0.9
+  - JUnit Jupiter for testing
+
+### Documentation
+- `ProjectHistory`: Tracks all major changes
+- `ProjectStructure.md`: Current structure documentation
+- `DATABASE_STATUS.md`: Database setup status
 
 ### Current Structure Overview
 - Source code organization:

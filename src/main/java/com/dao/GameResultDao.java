@@ -5,66 +5,68 @@ import com.util.QueryUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
 
 public class GameResultDao {
     private final Connection connection;
     
     public GameResultDao(Connection connection) {
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection cannot be null");
+        }
         this.connection = connection;
     }
     
-    public List<GameResult> getAllGameResults() throws SQLException {
-        List<GameResult> gameResults = new ArrayList<>();
-        String query = QueryUtil.getQuery("getAllGameResults");
-        
-        try (PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                gameResults.add(mapGameResult(rs));
-            }
+    public void insert(GameResult result) throws SQLException {
+        String sql = QueryUtil.getQuery("addGameResult");
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, result.userId());
+            stmt.setInt(2, result.food1Score());
+            stmt.setInt(3, result.food2Score());
+            stmt.setInt(4, result.obstacleCount());
+            stmt.setLong(5, result.gameDuration());
+            stmt.setTimestamp(6, Timestamp.valueOf(result.endTime()));
+            stmt.setBoolean(7, result.wasAIEnabled());
+            stmt.executeUpdate();
         }
-        return gameResults;
     }
-
-    public GameResult getGameResultById(int id) throws SQLException {
-        String query = QueryUtil.getQuery("getGameResultById");
+    
+    public List<GameResult> findByUserId(int userId) throws SQLException {
+        String sql = QueryUtil.getQuery("getGameResultsByUserId");
+        List<GameResult> results = new ArrayList<>();
         
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapGameResult(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    public List<GameResult> getAllGameResultsByUserId(int userId) throws SQLException {
-        List<GameResult> gameResults = new ArrayList<>();
-        String query = QueryUtil.getQuery("getAllGameResultsByUserId");
-        
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    gameResults.add(mapGameResult(rs));
+                    results.add(mapResultSet(rs));
                 }
             }
         }
-        return gameResults;
+        return results;
     }
-
-    private GameResult mapGameResult(ResultSet rs) throws SQLException {
+    
+    public List<GameResult> findAll() throws SQLException {
+        String sql = QueryUtil.getQuery("getAllGameResults");
+        List<GameResult> results = new ArrayList<>();
+        
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                results.add(mapResultSet(rs));
+            }
+        }
+        return results;
+    }
+    
+    private GameResult mapResultSet(ResultSet rs) throws SQLException {
         return new GameResult(
             rs.getInt("user_id"),
-            rs.getInt("food1_score"),
-            rs.getInt("food2_score"),
-            rs.getInt("obstacle_count"),
-            rs.getLong("game_duration"),
-            rs.getTimestamp("end_time").toLocalDateTime(),
-            rs.getBoolean("was_ai_enabled")
+            rs.getInt("food1Score"),
+            rs.getInt("food2Score"),
+            rs.getInt("obstacleCount"),
+            rs.getLong("gameDuration"),
+            rs.getTimestamp("endTime").toLocalDateTime(),
+            rs.getBoolean("wasAIEnabled")
         );
     }
 }

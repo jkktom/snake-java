@@ -10,6 +10,9 @@ public class CommentDao {
     private final Connection connection;
 
     public CommentDao(Connection connection) {
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection cannot be null");
+        }
         this.connection = connection;
     }
 
@@ -55,12 +58,13 @@ public class CommentDao {
         return comments;
     }
 
-    public void addComment(int userId, String content) throws SQLException {
+    public void addComment(int userId, int gameResultId, String content) throws SQLException {
         String query = QueryUtil.getQuery("addComment");
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, userId);
-            stmt.setString(2, content);
+            stmt.setInt(2, gameResultId);
+            stmt.setString(3, content);
             stmt.executeUpdate();
         }
     }
@@ -70,8 +74,7 @@ public class CommentDao {
             rs.getInt("id"),
             rs.getInt("user_id"),
             rs.getInt("game_result_id"),
-            rs.getString("content"),
-            rs.getTimestamp("created_at").toLocalDateTime()
+            rs.getString("content")
         );
     }
 }

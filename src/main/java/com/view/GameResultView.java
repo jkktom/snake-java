@@ -31,8 +31,7 @@ public class GameResultView {
 
             switch (choice) {
                 case 1 -> getAllGameResults();
-                case 2 -> getGameResultById();
-                case 3 -> getAllGameResultsByUserId();
+                case 2 -> getAllGameResultsByUserId();
                 case 0 -> {
                     System.out.println("프로그램을 종료합니다.");
                     return;
@@ -43,26 +42,17 @@ public class GameResultView {
     }
 
     private void getAllGameResults() {
-        List<GameResult> results = gameResultService.getAllGameResults();
-        if (results.isEmpty()) {
-            System.out.println("게임 기록이 없습니다.");
-            return;
+        try {
+            List<GameResult> results = gameResultService.getAllGameResults();
+            if (results.isEmpty()) {
+                System.out.println("게임 기록이 없습니다.");
+                return;
+            }
+            System.out.println("\n=== 전체 게임 기록 ===");
+            results.forEach(this::displayGameResult);
+        } catch (SQLException e) {
+            System.out.println("게임 기록 조회 중 오류 발생: " + e.getMessage());
         }
-
-        System.out.println("\n=== 전체 게임 기록 ===");
-        results.forEach(this::displayGameResult);
-    }
-
-    private void getGameResultById() {
-        System.out.print("조회할 기록 ID를 입력하세요: ");
-        int id = scanner.nextInt();
-        scanner.nextLine(); // 개행 문자 처리
-
-        gameResultService.getGameResultById(id)
-            .ifPresentOrElse(
-                this::displayGameResult,
-                () -> System.out.println("해당 ID의 게임 기록을 찾을 수 없습니다: " + id)
-            );
     }
 
     private void getAllGameResultsByUserId() {

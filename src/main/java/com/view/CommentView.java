@@ -68,7 +68,7 @@ public class CommentView {
             return;
         }
         System.out.println("\n=== 전체 댓글 목록 ===");
-        comments.forEach(comment -> System.out.println(commentService.getCommentSummary(comment)));
+        comments.forEach(System.out::println);
         System.out.println("\n총 " + comments.size() + "개의 댓글이 있습니다.");
     }
 
@@ -90,7 +90,7 @@ public class CommentView {
             }
             
             System.out.println("\n=== 댓글 상세 정보 ===");
-            System.out.println(commentService.getCommentSummary(comment.get()));
+            System.out.println(comment.get());
             
         } catch (NumberFormatException e) {
             System.out.println("❌ 유효한 숫자를 입력해주세요.");
@@ -115,7 +115,7 @@ public class CommentView {
             }
             
             System.out.println("\n=== 사용자 " + userId + "의 댓글 목록 ===");
-            comments.forEach(comment -> System.out.println(commentService.getCommentSummary(comment)));
+            comments.forEach(System.out::println);
             System.out.println("\n총 " + comments.size() + "개의 댓글이 있습니다.");
             
         } catch (NumberFormatException e) {

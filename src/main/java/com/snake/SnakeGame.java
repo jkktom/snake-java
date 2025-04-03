@@ -12,6 +12,7 @@ import com.snake.behavior.score.ScoreTracker;
 import com.snake.renderer.GameRenderer;
 import com.snake.ui.message.MessageDisplay;
 import com.snake.ui.overlay.GameOverlay;
+import com.service.GameResultService;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,6 +30,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     private Food food1;
     private Food food2;
     private final User user;
+    private final GameResultService gameResultService;
     
     // Game components
     private final FoodPlacer foodPlacer;
@@ -46,16 +48,20 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     private LocalDateTime endTime;
     private volatile boolean needsRepaint = true;
 
-    public SnakeGame(Frame frame, User user) {
+    public SnakeGame(Frame frame, User user, GameResultService gameResultService) {
         if (frame == null) {
             throw new IllegalArgumentException("Frame cannot be null");
         }
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
+        if (gameResultService == null) {
+            throw new IllegalArgumentException("GameResultService cannot be null");
+        }
         
         this.frame = frame;
         this.user = user;
+        this.gameResultService = gameResultService;
         
         // Initialize components
         this.foodPlacer = new FoodPlacer(frame);
@@ -187,6 +193,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         if (collision.hasCollision()) {
             gameOver = true;
             endTime = LocalDateTime.now();
+            saveGameResult();
             needsRepaint = true;
             return;
         }
@@ -204,6 +211,31 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             obstacleManager.trySpawnObstacle(snake, food1, food2);
         } else {
             snake = snake.move(newHead);
+        }
+    }
+    
+    private void saveGameResult() {
+        GameResult result = new GameResult(
+            user.id(),
+            scoreTracker.getFood1Score(),
+            scoreTracker.getFood2Score(),
+            obstacleManager.getObstacles().size(),
+            scoreTracker.getGameDuration(),
+            endTime,
+            snakeAI.isEnabled()
+        );
+        
+        try {
+            gameResultService.addGameResult(result);
+            JOptionPane.showMessageDialog(this,
+                "게임 결과가 저장되었습니다!\n" + result.getFormattedSummary(),
+                "게임 종료",
+                JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "게임 결과 저장 중 오류가 발생했습니다: " + e.getMessage(),
+                "저장 오류",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     

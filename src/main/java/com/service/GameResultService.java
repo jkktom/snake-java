@@ -10,28 +10,32 @@ public class GameResultService {
     private final GameResultDao gameResultDao;
 
     public GameResultService(GameResultDao gameResultDao) {
+        if (gameResultDao == null) {
+            throw new IllegalArgumentException("GameResultDao cannot be null");
+        }
         this.gameResultDao = gameResultDao;
     }
 
-    public List<GameResult> getAllGameResults() {
-        try {
-            return gameResultDao.getAllGameResults();
-        } catch (SQLException e) {
-            throw new RuntimeException("게임 기록 조회 중 오류 발생", e);
+    public void addGameResult(GameResult result) throws SQLException {
+        if (result == null) {
+            throw new IllegalArgumentException("GameResult cannot be null");
         }
+        gameResultDao.insert(result);
     }
 
-    public Optional<GameResult> getGameResultById(int id) {
-        try {
-            return Optional.ofNullable(gameResultDao.getGameResultById(id));
-        } catch (SQLException e) {
-            throw new RuntimeException("게임 기록 ID 조회 중 오류 발생: " + id, e);
-        }
+    public List<GameResult> getGameResultsByUserId(int userId) throws SQLException {
+        return gameResultDao.findByUserId(userId);
     }
+
+    public List<GameResult> getAllGameResults() throws SQLException {
+        return gameResultDao.findAll();
+    }
+
+   
 
     public List<GameResult> getAllGameResultsByUserId(int userId) {
         try {
-            return gameResultDao.getAllGameResultsByUserId(userId);
+            return gameResultDao.findByUserId(userId);
         } catch (SQLException e) {
             throw new RuntimeException("유저의 게임 기록 조회 중 오류 발생: " + userId, e);
         }

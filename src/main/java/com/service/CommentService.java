@@ -43,7 +43,7 @@ public class CommentService {
             if (content == null || content.trim().isEmpty()) {
                 throw new IllegalArgumentException("댓글 내용은 비어있을 수 없습니다.");
             }
-            commentDao.addComment(userId, content);
+            commentDao.addComment(userId, gameResultId, content);
             System.out.println("댓글이 성공적으로 등록되었습니다.");
         } catch (IllegalArgumentException e) {
             System.out.println("오류: " + e.getMessage());
@@ -51,7 +51,4 @@ public class CommentService {
         }
     }
 
-    public String getCommentSummary(Comment comment) {
-        return comment.getSummary();
-    }
 }

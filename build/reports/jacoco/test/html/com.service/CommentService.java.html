@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommentService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.service</a> &gt; <span class="el_source">CommentService.java</span></div><h1>CommentService.java</h1><pre class="source lang-java linenums">package com.service;
+
+import com.dao.CommentDao;
+import com.model.Comment;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+public class CommentService {
+    private final CommentDao commentDao;
+
+<span class="nc" id="L12">    public CommentService(CommentDao commentDao) {</span>
+<span class="nc" id="L13">        this.commentDao = commentDao;</span>
+<span class="nc" id="L14">    }</span>
+
+    public List&lt;Comment&gt; getAllComments() throws SQLException {
+<span class="nc" id="L17">        List&lt;Comment&gt; comments = commentDao.getAllComments();</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        if (comments.isEmpty()) {</span>
+<span class="nc" id="L19">            System.out.println(&quot;등록된 댓글이 없습니다.&quot;);</span>
+        }
+<span class="nc" id="L21">        return comments;</span>
+    }
+
+    public Optional&lt;Comment&gt; getCommentById(int id) throws SQLException {
+<span class="nc" id="L25">        Comment comment = commentDao.getCommentById(id);</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (comment == null) {</span>
+<span class="nc" id="L27">            System.out.println(&quot;해당 ID의 댓글을 찾을 수 없습니다: &quot; + id);</span>
+<span class="nc" id="L28">            return Optional.empty();</span>
+        }
+<span class="nc" id="L30">        return Optional.of(comment);</span>
+    }
+
+    public List&lt;Comment&gt; getAllCommentsByUserId(int userId) throws SQLException {
+<span class="nc" id="L34">        List&lt;Comment&gt; comments = commentDao.getAllCommentsByUserId(userId);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (comments.isEmpty()) {</span>
+<span class="nc" id="L36">            System.out.println(&quot;해당 사용자의 댓글이 없습니다: &quot; + userId);</span>
+        }
+<span class="nc" id="L38">        return comments;</span>
+    }
+
+    public void addComment(int userId, int gameResultId, String content) throws SQLException {
+        try {
+<span class="nc bnc" id="L43" title="All 4 branches missed.">            if (content == null || content.trim().isEmpty()) {</span>
+<span class="nc" id="L44">                throw new IllegalArgumentException(&quot;댓글 내용은 비어있을 수 없습니다.&quot;);</span>
+            }
+<span class="nc" id="L46">            commentDao.addComment(userId, content);</span>
+<span class="nc" id="L47">            System.out.println(&quot;댓글이 성공적으로 등록되었습니다.&quot;);</span>
+<span class="nc" id="L48">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L49">            System.out.println(&quot;오류: &quot; + e.getMessage());</span>
+<span class="nc" id="L50">            throw e;</span>
+<span class="nc" id="L51">        }</span>
+<span class="nc" id="L52">    }</span>
+
+    public String getCommentSummary(Comment comment) {
+<span class="nc" id="L55">        return comment.getSummary();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

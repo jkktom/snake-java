@@ -15,16 +15,16 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    // Database dependencies
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '4.0.3'
-    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
     implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.3.0'
-    // Add SLF4J binding for logging
+    
+    // Logging dependency (only one needed)
     implementation 'org.slf4j:slf4j-simple:2.0.9'
+    
+    // Test dependencies
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    implementation 'org.slf4j:slf4j-api:2.0.11'
-    implementation 'ch.qos.logback:logback-classic:1.4.14'
 }
 
 test {

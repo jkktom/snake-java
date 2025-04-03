@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Snake.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.model</a> &gt; <span class="el_source">Snake.java</span></div><h1>Snake.java</h1><pre class="source lang-java linenums">package com.model;
+
+import java.awt.Point;
+import java.util.List;
+import java.util.ArrayList;
+
+public class Snake {
+    private final List&lt;Point&gt; body;
+    private final Direction currentDirection;
+    private final boolean isAI;
+    
+<span class="nc" id="L12">    public Snake() {</span>
+<span class="nc" id="L13">        this.body = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L14">        this.body.add(new Point(5, 5)); // Starting position</span>
+<span class="nc" id="L15">        this.currentDirection = Direction.RIGHT;</span>
+<span class="nc" id="L16">        this.isAI = false;</span>
+<span class="nc" id="L17">    }</span>
+    
+<span class="nc" id="L19">    private Snake(List&lt;Point&gt; body, Direction direction, boolean isAI) {</span>
+<span class="nc" id="L20">        this.body = new ArrayList&lt;&gt;(body);</span>
+<span class="nc" id="L21">        this.currentDirection = direction;</span>
+<span class="nc" id="L22">        this.isAI = isAI;</span>
+<span class="nc" id="L23">    }</span>
+    
+    public List&lt;Point&gt; getBody() {
+<span class="nc" id="L26">        return new ArrayList&lt;&gt;(body);</span>
+    }
+    
+    public Point getHead() {
+<span class="nc" id="L30">        return new Point(body.get(0));</span>
+    }
+    
+    public Direction getDirection() {
+<span class="nc" id="L34">        return currentDirection;</span>
+    }
+    
+    public Snake setDirection(Direction direction) {
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        if (direction.isOpposite(currentDirection)) {</span>
+<span class="nc" id="L39">            return this; // Can't move in opposite direction</span>
+        }
+<span class="nc" id="L41">        return new Snake(body, direction, isAI);</span>
+    }
+    
+    public boolean isAI() {
+<span class="nc" id="L45">        return isAI;</span>
+    }
+    
+    public Snake setAI(boolean ai) {
+<span class="nc" id="L49">        return new Snake(body, currentDirection, ai);</span>
+    }
+    
+    public Snake move(Point newHead) {
+<span class="nc" id="L53">        List&lt;Point&gt; newBody = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L54">        newBody.add(newHead);</span>
+        // Add all segments except the last one (tail)
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        for (int i = 0; i &lt; body.size() - 1; i++) {</span>
+<span class="nc" id="L57">            newBody.add(new Point(body.get(i)));</span>
+        }
+<span class="nc" id="L59">        return new Snake(newBody, currentDirection, isAI);</span>
+    }
+    
+    public Snake grow(Point newHead) {
+<span class="nc" id="L63">        List&lt;Point&gt; newBody = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L64">        newBody.add(newHead);</span>
+        // Add all existing segments
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        for (Point segment : body) {</span>
+<span class="nc" id="L67">            newBody.add(new Point(segment));</span>
+<span class="nc" id="L68">        }</span>
+<span class="nc" id="L69">        return new Snake(newBody, currentDirection, isAI);</span>
+    }
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

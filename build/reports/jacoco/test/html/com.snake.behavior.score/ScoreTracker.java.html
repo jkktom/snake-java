@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScoreTracker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake.behavior.score</a> &gt; <span class="el_source">ScoreTracker.java</span></div><h1>ScoreTracker.java</h1><pre class="source lang-java linenums">package com.snake.behavior.score;
+
+public class ScoreTracker {
+    private int food1Score;
+    private int food2Score;
+    private long startTime;
+
+<span class="nc" id="L8">    public ScoreTracker() {</span>
+<span class="nc" id="L9">        reset();</span>
+<span class="nc" id="L10">    }</span>
+
+    public void reset() {
+<span class="nc" id="L13">        food1Score = 0;</span>
+<span class="nc" id="L14">        food2Score = 0;</span>
+<span class="nc" id="L15">        startTime = System.currentTimeMillis();</span>
+<span class="nc" id="L16">    }</span>
+
+    public void incrementFood1Score() {
+<span class="nc" id="L19">        food1Score++;</span>
+<span class="nc" id="L20">    }</span>
+
+    public void incrementFood2Score() {
+<span class="nc" id="L23">        food2Score++;</span>
+<span class="nc" id="L24">    }</span>
+
+    public int getFood1Score() {
+<span class="nc" id="L27">        return food1Score;</span>
+    }
+
+    public int getFood2Score() {
+<span class="nc" id="L31">        return food2Score;</span>
+    }
+
+    public int getTotalScore() {
+<span class="nc" id="L35">        return food1Score + food2Score;</span>
+    }
+
+    public long getGameDuration() {
+<span class="nc" id="L39">        return System.currentTimeMillis() - startTime;</span>
+    }
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

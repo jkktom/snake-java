@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SnakeRenderer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake.renderer</a> &gt; <span class="el_source">SnakeRenderer.java</span></div><h1>SnakeRenderer.java</h1><pre class="source lang-java linenums">package com.snake.renderer;
+
+import com.model.Snake;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Point;
+
+<span class="nc" id="L8">public class SnakeRenderer {</span>
+<span class="nc" id="L9">    private static final Color SNAKE_COLOR = Color.GREEN;</span>
+<span class="nc" id="L10">    private static final Color HEAD_COLOR = new Color(0, 180, 0);</span>
+    private static final int TILE_SIZE = 20;
+
+    public void render(Graphics g, Snake snake) {
+<span class="nc" id="L14">        var body = snake.getBody();</span>
+        
+        // Draw body
+<span class="nc" id="L17">        g.setColor(SNAKE_COLOR);</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        for (int i = 1; i &lt; body.size(); i++) {</span>
+<span class="nc" id="L19">            Point segment = body.get(i);</span>
+<span class="nc" id="L20">            g.fillRect(segment.x * TILE_SIZE, </span>
+                      segment.y * TILE_SIZE, 
+                      TILE_SIZE - 1, 
+                      TILE_SIZE - 1);
+        }
+        
+        // Draw head
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (!body.isEmpty()) {</span>
+<span class="nc" id="L28">            Point head = body.get(0);</span>
+<span class="nc" id="L29">            g.setColor(HEAD_COLOR);</span>
+<span class="nc" id="L30">            g.fillRect(head.x * TILE_SIZE, </span>
+                      head.y * TILE_SIZE, 
+                      TILE_SIZE - 1, 
+                      TILE_SIZE - 1);
+        }
+<span class="nc" id="L35">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

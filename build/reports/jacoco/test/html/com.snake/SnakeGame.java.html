@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SnakeGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake</a> &gt; <span class="el_source">SnakeGame.java</span></div><h1>SnakeGame.java</h1><pre class="source lang-java linenums">package com.snake;
+
+import com.model.*;
+import com.model.Frame;
+import com.snake.behavior.collision.CollisionDetector;
+import com.snake.behavior.collision.CollisionDetector.CollisionResult;
+import com.snake.behavior.food.FoodPlacer;
+import com.snake.behavior.food.FoodCollisionHandler;
+import com.snake.behavior.obstacle.ObstacleManager;
+import com.snake.behavior.obstacle.ObstacleSpawner;
+import com.snake.behavior.score.ScoreTracker;
+import com.snake.renderer.GameRenderer;
+import com.snake.ui.message.MessageDisplay;
+import com.snake.ui.overlay.GameOverlay;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.swing.*;
+
+public class SnakeGame extends JPanel implements ActionListener, KeyListener {
+    private static final int DELAY = 100;  // 10 FPS for game logic
+    private static final int RENDER_DELAY = 16;  // ~60 FPS for rendering
+    
+    private final Frame frame;
+    private Snake snake;
+    private Food food1;
+    private Food food2;
+    private final User user;
+    
+    // Game components
+    private final FoodPlacer foodPlacer;
+    private final FoodCollisionHandler foodHandler;
+    private final ObstacleManager obstacleManager;
+    private final CollisionDetector collisionDetector;
+    private final ScoreTracker scoreTracker;
+    private final GameRenderer gameRenderer;
+    private final GameOverlay gameOverlay;
+    private SnakeAI snakeAI;
+    
+    private Timer gameLoop;
+    private Timer renderLoop;
+<span class="nc" id="L45">    private boolean gameOver = false;</span>
+    private LocalDateTime endTime;
+<span class="nc" id="L47">    private volatile boolean needsRepaint = true;</span>
+
+<span class="nc" id="L49">    public SnakeGame(Frame frame, User user) {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (frame == null) {</span>
+<span class="nc" id="L51">            throw new IllegalArgumentException(&quot;Frame cannot be null&quot;);</span>
+        }
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (user == null) {</span>
+<span class="nc" id="L54">            throw new IllegalArgumentException(&quot;User cannot be null&quot;);</span>
+        }
+        
+<span class="nc" id="L57">        this.frame = frame;</span>
+<span class="nc" id="L58">        this.user = user;</span>
+        
+        // Initialize components
+<span class="nc" id="L61">        this.foodPlacer = new FoodPlacer(frame);</span>
+<span class="nc" id="L62">        ObstacleSpawner obstacleSpawner = new ObstacleSpawner(frame);</span>
+<span class="nc" id="L63">        this.obstacleManager = new ObstacleManager(obstacleSpawner);</span>
+<span class="nc" id="L64">        this.collisionDetector = new CollisionDetector(obstacleManager);</span>
+<span class="nc" id="L65">        this.foodHandler = new FoodCollisionHandler(foodPlacer);</span>
+<span class="nc" id="L66">        this.scoreTracker = new ScoreTracker();</span>
+<span class="nc" id="L67">        this.gameRenderer = new GameRenderer();</span>
+<span class="nc" id="L68">        this.gameOverlay = new GameOverlay();</span>
+        
+        // Set up panel
+<span class="nc" id="L71">        setPreferredSize(new Dimension(frame.width(), frame.height()));</span>
+<span class="nc" id="L72">        setBackground(Color.black);</span>
+<span class="nc" id="L73">        addKeyListener(this);</span>
+<span class="nc" id="L74">        setFocusable(true);</span>
+        
+        // Enable double buffering
+<span class="nc" id="L77">        setDoubleBuffered(true);</span>
+        
+        // Initialize game state
+<span class="nc" id="L80">        resetGame();</span>
+        
+        // Start game loop (10 FPS)
+<span class="nc" id="L83">        gameLoop = new Timer(DELAY, e -&gt; {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (!gameOver) {</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (snakeAI.isEnabled()) {</span>
+<span class="nc" id="L86">                    snakeAI.makeMove();</span>
+                }
+<span class="nc" id="L88">                move();</span>
+<span class="nc" id="L89">                needsRepaint = true;</span>
+            }
+<span class="nc" id="L91">        });</span>
+<span class="nc" id="L92">        gameLoop.start();</span>
+        
+        // Start render loop (60 FPS)
+<span class="nc" id="L95">        renderLoop = new Timer(RENDER_DELAY, e -&gt; {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (needsRepaint) {</span>
+<span class="nc" id="L97">                repaint();</span>
+<span class="nc" id="L98">                needsRepaint = false;</span>
+            }
+<span class="nc" id="L100">        });</span>
+<span class="nc" id="L101">        renderLoop.start();</span>
+        
+        // Show welcome message
+<span class="nc" id="L104">        MessageDisplay.showWelcomeMessage();</span>
+<span class="nc" id="L105">    }</span>
+    
+    private void resetGame() {
+<span class="nc" id="L108">        snake = new Snake();</span>
+<span class="nc" id="L109">        food1 = foodPlacer.placeFood(snake, obstacleManager.getObstacles(), null);</span>
+<span class="nc" id="L110">        food2 = foodPlacer.placeFood(snake, obstacleManager.getObstacles(), food1);</span>
+<span class="nc" id="L111">        obstacleManager.clear();</span>
+<span class="nc" id="L112">        scoreTracker.reset();</span>
+<span class="nc" id="L113">        gameOver = false;</span>
+<span class="nc" id="L114">        endTime = null;</span>
+<span class="nc" id="L115">        needsRepaint = true;</span>
+        
+<span class="nc" id="L117">        snakeAI = new SnakeAI(this);</span>
+<span class="nc" id="L118">        snakeAI.enableAI();</span>
+        
+<span class="nc" id="L120">        requestFocus();</span>
+<span class="nc" id="L121">    }</span>
+    
+    @Override
+    public void paintComponent(Graphics g) {
+<span class="nc" id="L125">        super.paintComponent(g);</span>
+        
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (g == null) return;</span>
+        
+        // Create buffer
+<span class="nc" id="L130">        Image offscreen = createImage(getWidth(), getHeight());</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (offscreen == null) {</span>
+<span class="nc" id="L132">            return;</span>
+        }
+        
+<span class="nc" id="L135">        Graphics offG = offscreen.getGraphics();</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (offG == null) {</span>
+<span class="nc" id="L137">            return;</span>
+        }
+        
+        // Clear background
+<span class="nc" id="L141">        offG.setColor(getBackground());</span>
+<span class="nc" id="L142">        offG.fillRect(0, 0, getWidth(), getHeight());</span>
+        
+        // Render game state
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (gameOver) {</span>
+<span class="nc" id="L146">            GameResult result = new GameResult(</span>
+                1, // playerId
+<span class="nc" id="L148">                scoreTracker.getFood1Score(),</span>
+<span class="nc" id="L149">                scoreTracker.getFood2Score(),</span>
+<span class="nc" id="L150">                obstacleManager.getObstacles().size(),</span>
+<span class="nc" id="L151">                scoreTracker.getGameDuration(),</span>
+                endTime,
+<span class="nc" id="L153">                snakeAI.isEnabled()</span>
+            );
+<span class="nc" id="L155">            gameOverlay.render(offG, result);</span>
+<span class="nc" id="L156">        } else {</span>
+<span class="nc" id="L157">            gameRenderer.render(offG, snake, food1, food2, </span>
+<span class="nc" id="L158">                              obstacleManager.getObstacles(),</span>
+<span class="nc" id="L159">                              user.username(), </span>
+<span class="nc" id="L160">                              snakeAI.isEnabled(),</span>
+                              gameOver);
+        }
+        
+        // Draw buffer to screen
+<span class="nc" id="L165">        g.drawImage(offscreen, 0, 0, this);</span>
+<span class="nc" id="L166">        offG.dispose();</span>
+<span class="nc" id="L167">    }</span>
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // No longer used for game loop
+<span class="nc" id="L172">    }</span>
+    
+    private void move() {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (gameOver) return;</span>
+
+        // Get current direction and calculate new head position
+<span class="nc" id="L178">        Direction direction = snake.getDirection();</span>
+<span class="nc" id="L179">        Point head = snake.getHead();</span>
+<span class="nc" id="L180">        Point newHead = new Point(</span>
+<span class="nc" id="L181">            head.x + direction.getDx(),</span>
+<span class="nc" id="L182">            head.y + direction.getDy()</span>
+        );
+
+        // Check collisions
+<span class="nc" id="L186">        CollisionResult collision = collisionDetector.checkCollision(newHead, snake);</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        if (collision.hasCollision()) {</span>
+<span class="nc" id="L188">            gameOver = true;</span>
+<span class="nc" id="L189">            endTime = LocalDateTime.now();</span>
+<span class="nc" id="L190">            needsRepaint = true;</span>
+<span class="nc" id="L191">            return;</span>
+        }
+
+        // Check food collision
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        if (foodHandler.checkFoodCollision(newHead, food1)) {</span>
+<span class="nc" id="L196">            snake = foodHandler.handleFoodCollision(snake, newHead);</span>
+<span class="nc" id="L197">            scoreTracker.incrementFood1Score();</span>
+<span class="nc" id="L198">            food1 = foodPlacer.placeFood(snake, obstacleManager.getObstacles(), food2);</span>
+<span class="nc" id="L199">            obstacleManager.trySpawnObstacle(snake, food1, food2);</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        } else if (foodHandler.checkFoodCollision(newHead, food2)) {</span>
+<span class="nc" id="L201">            snake = foodHandler.handleFoodCollision(snake, newHead);</span>
+<span class="nc" id="L202">            scoreTracker.incrementFood2Score();</span>
+<span class="nc" id="L203">            food2 = foodPlacer.placeFood(snake, obstacleManager.getObstacles(), food1);</span>
+<span class="nc" id="L204">            obstacleManager.trySpawnObstacle(snake, food1, food2);</span>
+        } else {
+<span class="nc" id="L206">            snake = snake.move(newHead);</span>
+        }
+<span class="nc" id="L208">    }</span>
+    
+    @Override
+    public void keyPressed(KeyEvent e) {
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (gameOver) {</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">            if (e.getKeyCode() == KeyEvent.VK_SPACE) {</span>
+<span class="nc" id="L214">                resetGame();</span>
+            }
+<span class="nc" id="L216">            return;</span>
+        }
+
+<span class="nc bnc" id="L219" title="All 5 branches missed.">        Direction newDirection = switch (e.getKeyCode()) {</span>
+<span class="nc" id="L220">            case KeyEvent.VK_UP -&gt; Direction.UP;</span>
+<span class="nc" id="L221">            case KeyEvent.VK_RIGHT -&gt; Direction.RIGHT;</span>
+<span class="nc" id="L222">            case KeyEvent.VK_DOWN -&gt; Direction.DOWN;</span>
+<span class="nc" id="L223">            case KeyEvent.VK_LEFT -&gt; Direction.LEFT;</span>
+<span class="nc" id="L224">            default -&gt; null;</span>
+        };
+
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        if (newDirection != null) {</span>
+<span class="nc" id="L228">            snake = snake.setDirection(newDirection);</span>
+<span class="nc" id="L229">            needsRepaint = true;</span>
+        }
+
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (e.getKeyCode() == KeyEvent.VK_A) {</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            snake = snake.setAI(!snake.isAI());</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            if (snake.isAI()) {</span>
+<span class="nc" id="L235">                snakeAI.enableAI();</span>
+            } else {
+<span class="nc" id="L237">                snakeAI.disableAI();</span>
+            }
+<span class="nc" id="L239">            needsRepaint = true;</span>
+        }
+<span class="nc" id="L241">    }</span>
+    
+    @Override
+<span class="nc" id="L244">    public void keyTyped(KeyEvent e) {}</span>
+    
+    @Override
+<span class="nc" id="L247">    public void keyReleased(KeyEvent e) {}</span>
+    
+    // Getters for AI
+<span class="nc" id="L250">    public Frame getFrame() { return frame; }</span>
+<span class="nc" id="L251">    public Snake getSnake() { return snake; }</span>
+<span class="nc" id="L252">    public Food getFood1() { return food1; }</span>
+<span class="nc" id="L253">    public Food getFood2() { return food2; }</span>
+<span class="nc" id="L254">    public List&lt;Obstacle&gt; getObstacles() { return obstacleManager.getObstacles(); }</span>
+    
+    public void setSnakeDirection(Direction direction) {
+<span class="nc" id="L257">        snake = snake.setDirection(direction);</span>
+<span class="nc" id="L258">        needsRepaint = true;</span>
+<span class="nc" id="L259">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

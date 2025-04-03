@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageDisplay.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake.ui.message</a> &gt; <span class="el_source">MessageDisplay.java</span></div><h1>MessageDisplay.java</h1><pre class="source lang-java linenums">package com.snake.ui.message;
+
+import javax.swing.JOptionPane;
+
+<span class="nc" id="L5">public class MessageDisplay {</span>
+    public static String getPlayerName() {
+        String name;
+        do {
+<span class="nc" id="L9">            name = JOptionPane.showInputDialog(</span>
+                null,
+                &quot;Enter your name:&quot;,
+                &quot;Snake Game&quot;,
+                JOptionPane.QUESTION_MESSAGE
+            );
+            
+<span class="nc bnc" id="L16" title="All 2 branches missed.">            if (name == null) {</span>
+<span class="nc" id="L17">                int choice = JOptionPane.showConfirmDialog(</span>
+                    null,
+                    &quot;Do you want to exit?&quot;,
+                    &quot;Snake Game&quot;,
+                    JOptionPane.YES_NO_OPTION
+                );
+<span class="nc bnc" id="L23" title="All 2 branches missed.">                if (choice == JOptionPane.YES_OPTION) {</span>
+<span class="nc" id="L24">                    System.exit(0);</span>
+                }
+            }
+<span class="nc bnc" id="L27" title="All 4 branches missed.">        } while (name == null || name.trim().isEmpty());</span>
+        
+<span class="nc" id="L29">        return name.trim();</span>
+    }
+
+    public static void showWelcomeMessage() {
+<span class="nc" id="L33">        JOptionPane.showMessageDialog(</span>
+            null,
+            &quot;&quot;&quot;
+            Welcome to Snake!
+            
+            Controls:
+            - Arrow keys to move
+            - 'A' to toggle AI mode
+            - SPACE to restart after game over
+            
+            Collect food to grow and avoid obstacles!
+            &quot;&quot;&quot;,
+            &quot;Snake Game&quot;,
+            JOptionPane.INFORMATION_MESSAGE
+        );
+<span class="nc" id="L48">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

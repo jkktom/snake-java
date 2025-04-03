@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.config.JDBCConnectionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-04-03T05:23:58" hostname="archlinux" time="0.285">
+  <properties/>
+  <testcase name="testConnection()" classname="com.config.JDBCConnectionTest" time="0.285"/>
+  <system-out><![CDATA[테스트 시작
+DB 커넥션이 연결되었습니다.
+테스트 종료 및 자원 반납
+]]></system-out>
+  <system-err><![CDATA[[Test worker] INFO com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+[Test worker] INFO com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+[Test worker] INFO com.config.JDBCConnection - Database connection pool closed
+]]></system-err>
+</testsuite>

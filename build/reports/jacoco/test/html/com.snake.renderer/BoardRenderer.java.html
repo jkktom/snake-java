@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardRenderer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake.renderer</a> &gt; <span class="el_source">BoardRenderer.java</span></div><h1>BoardRenderer.java</h1><pre class="source lang-java linenums">package com.snake.renderer;
+
+import java.awt.Graphics;
+import java.awt.Color;
+
+<span class="nc" id="L6">public class BoardRenderer {</span>
+<span class="nc" id="L7">    private static final Color BACKGROUND_COLOR = Color.BLACK;</span>
+<span class="nc" id="L8">    private static final Color GRID_COLOR = new Color(20, 20, 20);</span>
+    private static final int TILE_SIZE = 20;
+
+    public void render(Graphics g) {
+        // Fill background
+<span class="nc" id="L13">        g.setColor(BACKGROUND_COLOR);</span>
+<span class="nc" id="L14">        g.fillRect(0, 0, 800, 600);</span>
+
+        // Draw grid
+<span class="nc" id="L17">        g.setColor(GRID_COLOR);</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        for (int x = 0; x &lt; 800; x += TILE_SIZE) {</span>
+<span class="nc" id="L19">            g.drawLine(x, 0, x, 600);</span>
+        }
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        for (int y = 0; y &lt; 600; y += TILE_SIZE) {</span>
+<span class="nc" id="L22">            g.drawLine(0, y, 800, y);</span>
+        }
+<span class="nc" id="L24">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

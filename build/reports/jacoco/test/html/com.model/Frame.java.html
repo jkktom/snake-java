@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Frame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.model</a> &gt; <span class="el_source">Frame.java</span></div><h1>Frame.java</h1><pre class="source lang-java linenums">package com.model;
+
+public record Frame(
+    int width,
+    int height
+) {
+    public static final int DEFAULT_SIZE = 600;
+    
+<span class="nc" id="L9">    public Frame {</span>
+<span class="nc bnc" id="L10" title="All 4 branches missed.">        if (width &lt;= 0 || height &lt;= 0) {</span>
+<span class="nc" id="L11">            throw new IllegalArgumentException(&quot;Frame dimensions must be positive&quot;);</span>
+        }
+<span class="nc" id="L13">    }</span>
+    
+    // Default square frame constructor
+    public Frame() {
+<span class="nc" id="L17">        this(DEFAULT_SIZE, DEFAULT_SIZE);</span>
+<span class="nc" id="L18">    }</span>
+    
+    // Convenience constructor for square frame
+    public static Frame square(int size) {
+<span class="nc" id="L22">        return new Frame(size, size);</span>
+    }
+    
+    // Get the center point of the frame
+    public int getCenterX() {
+<span class="nc" id="L27">        return width / 2;</span>
+    }
+    
+    public int getCenterY() {
+<span class="nc" id="L31">        return height / 2;</span>
+    }
+    
+    // Check if a position is within the frame bounds
+    public boolean contains(int x, int y) {
+<span class="nc bnc" id="L36" title="All 8 branches missed.">        return x &gt;= 0 &amp;&amp; x &lt; width &amp;&amp; y &gt;= 0 &amp;&amp; y &lt; height;</span>
+    }
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SnakeAI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake</a> &gt; <span class="el_source">SnakeAI.java</span></div><h1>SnakeAI.java</h1><pre class="source lang-java linenums">package com.snake;
+
+import com.model.Direction;
+//import com.model.Food;
+import com.model.Obstacle;
+import java.awt.Point;
+
+public class SnakeAI {
+    private final SnakeGame game;
+    private boolean enabled;
+
+<span class="nc" id="L12">    public SnakeAI(SnakeGame game) {</span>
+<span class="nc" id="L13">        this.game = game;</span>
+<span class="nc" id="L14">        this.enabled = false;</span>
+<span class="nc" id="L15">    }</span>
+
+    public boolean isEnabled() {
+<span class="nc" id="L18">        return enabled;</span>
+    }
+
+    public void enableAI() {
+<span class="nc" id="L22">        enabled = true;</span>
+<span class="nc" id="L23">    }</span>
+
+    public void disableAI() {
+<span class="nc" id="L26">        enabled = false;</span>
+<span class="nc" id="L27">    }</span>
+
+    public void makeMove() {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (!enabled) return;</span>
+
+        // Get current state
+<span class="nc" id="L33">        Point head = game.getSnake().getHead();</span>
+<span class="nc" id="L34">        Point food1Pos = game.getFood1().getPosition();</span>
+<span class="nc" id="L35">        Point food2Pos = game.getFood2().getPosition();</span>
+
+        // Find closest food
+<span class="nc" id="L38">        Point targetFood = getClosestFood(head, food1Pos, food2Pos);</span>
+
+        // Calculate direction to move
+<span class="nc" id="L41">        Direction currentDir = game.getSnake().getDirection();</span>
+<span class="nc" id="L42">        Direction bestDir = getBestDirection(head, targetFood, currentDir);</span>
+
+        // Update snake direction
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (bestDir != null) {</span>
+<span class="nc" id="L46">            game.setSnakeDirection(bestDir);</span>
+        }
+<span class="nc" id="L48">    }</span>
+
+    private Point getClosestFood(Point head, Point food1, Point food2) {
+<span class="nc" id="L51">        int dist1 = Math.abs(head.x - food1.x) + Math.abs(head.y - food1.y);</span>
+<span class="nc" id="L52">        int dist2 = Math.abs(head.x - food2.x) + Math.abs(head.y - food2.y);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        return dist1 &lt;= dist2 ? food1 : food2;</span>
+    }
+
+    private Direction getBestDirection(Point head, Point target, Direction currentDir) {
+        // Try each direction
+<span class="nc" id="L58">        Direction[] directions = Direction.values();</span>
+<span class="nc" id="L59">        Direction bestDir = null;</span>
+<span class="nc" id="L60">        int minDist = Integer.MAX_VALUE;</span>
+
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        for (Direction dir : directions) {</span>
+            // Skip opposite direction
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            if (dir.isOpposite(currentDir)) continue;</span>
+
+            // Calculate new position
+<span class="nc" id="L67">            Point newPos = new Point(</span>
+<span class="nc" id="L68">                head.x + dir.getDx(),</span>
+<span class="nc" id="L69">                head.y + dir.getDy()</span>
+            );
+
+            // Skip if would hit wall
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (!game.getFrame().contains(newPos.x, newPos.y)) continue;</span>
+
+            // Skip if would hit obstacle
+<span class="nc" id="L76">            boolean hitObstacle = false;</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            for (Obstacle obs : game.getObstacles()) {</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">                if (obs.getPosition().equals(newPos)) {</span>
+<span class="nc" id="L79">                    hitObstacle = true;</span>
+<span class="nc" id="L80">                    break;</span>
+                }
+<span class="nc" id="L82">            }</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (hitObstacle) continue;</span>
+
+            // Skip if would hit self
+<span class="nc" id="L86">            boolean hitSelf = false;</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">            for (Point bodyPart : game.getSnake().getBody()) {</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                if (bodyPart.equals(newPos)) {</span>
+<span class="nc" id="L89">                    hitSelf = true;</span>
+<span class="nc" id="L90">                    break;</span>
+                }
+<span class="nc" id="L92">            }</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            if (hitSelf) continue;</span>
+
+            // Calculate manhattan distance to target
+<span class="nc" id="L96">            int dist = Math.abs(newPos.x - target.x) + Math.abs(newPos.y - target.y);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if (dist &lt; minDist) {</span>
+<span class="nc" id="L98">                minDist = dist;</span>
+<span class="nc" id="L99">                bestDir = dir;</span>
+            }
+        }
+
+<span class="nc" id="L103">        return bestDir;</span>
+    }
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

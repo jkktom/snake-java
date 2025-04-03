@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameResultService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.service</a> &gt; <span class="el_source">GameResultService.java</span></div><h1>GameResultService.java</h1><pre class="source lang-java linenums">package com.service;
+
+import com.dao.GameResultDao;
+import com.model.GameResult;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+public class GameResultService {
+    private final GameResultDao gameResultDao;
+
+<span class="nc" id="L12">    public GameResultService(GameResultDao gameResultDao) {</span>
+<span class="nc" id="L13">        this.gameResultDao = gameResultDao;</span>
+<span class="nc" id="L14">    }</span>
+
+    public List&lt;GameResult&gt; getAllGameResults() {
+        try {
+<span class="nc" id="L18">            return gameResultDao.getAllGameResults();</span>
+<span class="nc" id="L19">        } catch (SQLException e) {</span>
+<span class="nc" id="L20">            throw new RuntimeException(&quot;게임 기록 조회 중 오류 발생&quot;, e);</span>
+        }
+    }
+
+    public Optional&lt;GameResult&gt; getGameResultById(int id) {
+        try {
+<span class="nc" id="L26">            return Optional.ofNullable(gameResultDao.getGameResultById(id));</span>
+<span class="nc" id="L27">        } catch (SQLException e) {</span>
+<span class="nc" id="L28">            throw new RuntimeException(&quot;게임 기록 ID 조회 중 오류 발생: &quot; + id, e);</span>
+        }
+    }
+
+    public List&lt;GameResult&gt; getAllGameResultsByUserId(int userId) {
+        try {
+<span class="nc" id="L34">            return gameResultDao.getAllGameResultsByUserId(userId);</span>
+<span class="nc" id="L35">        } catch (SQLException e) {</span>
+<span class="nc" id="L36">            throw new RuntimeException(&quot;유저의 게임 기록 조회 중 오류 발생: &quot; + userId, e);</span>
+        }
+    }
+
+    public String getGameResultSummary(GameResult result) {
+<span class="nc" id="L41">        return String.format(&quot;&quot;&quot;</span>
+            총점: %d점 (Food1: %d, Food2: %d)
+            장애물 수: %d개
+            게임 시간: %s
+            AI 사용: %s
+            종료 시간: %s
+            &quot;&quot;&quot;,
+<span class="nc" id="L48">            result.getTotalScore(),</span>
+<span class="nc" id="L49">            result.food1Score(),</span>
+<span class="nc" id="L50">            result.food2Score(),</span>
+<span class="nc" id="L51">            result.obstacleCount(),</span>
+<span class="nc" id="L52">            result.getFormattedDuration(),</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            result.wasAIEnabled() ? &quot;예&quot; : &quot;아니오&quot;,</span>
+<span class="nc" id="L54">            result.endTime()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

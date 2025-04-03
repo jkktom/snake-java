@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ObstacleSpawner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.snake.behavior.obstacle</a> &gt; <span class="el_source">ObstacleSpawner.java</span></div><h1>ObstacleSpawner.java</h1><pre class="source lang-java linenums">package com.snake.behavior.obstacle;
+
+import com.model.Obstacle;
+import com.model.Snake;
+import com.model.Food;
+import com.model.Frame;
+import java.awt.Point;
+import java.util.List;
+import java.util.Random;
+
+public class ObstacleSpawner {
+    private static final int TILE_SIZE = 20;
+    
+    private final Random random;
+    private final Frame frame;
+
+<span class="nc" id="L17">    public ObstacleSpawner(Frame frame) {</span>
+<span class="nc" id="L18">        this.frame = frame;</span>
+<span class="nc" id="L19">        this.random = new Random();</span>
+<span class="nc" id="L20">    }</span>
+
+    public Frame getFrame() {
+<span class="nc" id="L23">        return frame;</span>
+    }
+
+    public Obstacle spawnObstacle(Snake snake, List&lt;Obstacle&gt; obstacles, Food food1, Food food2) {
+        Point position;
+        do {
+<span class="nc" id="L29">            position = new Point(</span>
+<span class="nc" id="L30">                random.nextInt(frame.width() / TILE_SIZE),</span>
+<span class="nc" id="L31">                random.nextInt(frame.height() / TILE_SIZE)</span>
+            );
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        } while (isInvalidPosition(position, snake, obstacles, food1, food2));</span>
+
+<span class="nc" id="L35">        return new Obstacle(position);</span>
+    }
+
+    private boolean isInvalidPosition(Point position, Snake snake, List&lt;Obstacle&gt; obstacles, Food food1, Food food2) {
+        // Check if position overlaps with snake
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (snake.getBody().contains(position)) {</span>
+<span class="nc" id="L41">            return true;</span>
+        }
+
+        // Check if position overlaps with existing obstacles
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        for (Obstacle obstacle : obstacles) {</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (obstacle.getPosition().equals(position)) {</span>
+<span class="nc" id="L47">                return true;</span>
+            }
+<span class="nc" id="L49">        }</span>
+
+        // Check if position overlaps with food
+<span class="nc bnc" id="L52" title="All 4 branches missed.">        if (food1.getPosition().equals(position) || food2.getPosition().equals(position)) {</span>
+<span class="nc" id="L53">            return true;</span>
+        }
+
+<span class="nc" id="L56">        return false;</span>
+    }
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

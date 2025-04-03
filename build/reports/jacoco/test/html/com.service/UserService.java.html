@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">snake-java</a> &gt; <a href="index.source.html" class="el_package">com.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.service;
+
+import com.dao.UserDao;
+import com.model.User;
+import com.model.GameResult;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+public class UserService {
+    private final UserDao userDao;
+
+<span class="nc" id="L14">    public UserService(UserDao userDao) {</span>
+<span class="nc" id="L15">        this.userDao = userDao;</span>
+<span class="nc" id="L16">    }</span>
+
+    public List&lt;User&gt; getAllUsers() {
+        try {
+<span class="nc" id="L20">            return userDao.getAllUsers();</span>
+<span class="nc" id="L21">        } catch (SQLException e) {</span>
+<span class="nc" id="L22">            throw new RuntimeException(&quot;Failed to get users&quot;, e);</span>
+        }
+    }
+
+    public Optional&lt;User&gt; getUserById(int id) {
+        try {
+<span class="nc" id="L28">            return Optional.ofNullable(userDao.getUserById(id));</span>
+<span class="nc" id="L29">        } catch (SQLException e) {</span>
+<span class="nc" id="L30">            throw new RuntimeException(&quot;Failed to get user by id: &quot; + id, e);</span>
+        }
+    }
+
+    public Optional&lt;User&gt; getUserByUsername(String username) {
+        try {
+<span class="nc" id="L36">            return Optional.ofNullable(userDao.getUserByUsername(username));</span>
+<span class="nc" id="L37">        } catch (SQLException e) {</span>
+<span class="nc" id="L38">            throw new RuntimeException(&quot;Failed to get user by username: &quot; + username, e);</span>
+        }
+    }
+
+    public List&lt;GameResult&gt; getUserGameHistory(String username) {
+        try {
+<span class="nc" id="L44">            User user = userDao.getUserByUsername(username);</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">            if (user == null) {</span>
+<span class="nc" id="L46">                throw new IllegalArgumentException(&quot;User not found: &quot; + username);</span>
+            }
+<span class="nc" id="L48">            return user.getGameHistory();</span>
+<span class="nc" id="L49">        } catch (SQLException e) {</span>
+<span class="nc" id="L50">            throw new RuntimeException(&quot;Failed to get game history for user: &quot; + username, e);</span>
+        }
+    }
+
+    public String getUserStats(String username) {
+<span class="nc" id="L55">        List&lt;GameResult&gt; history = getUserGameHistory(username);</span>
+<span class="nc" id="L56">        int totalGames = history.size();</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (totalGames == 0) {</span>
+<span class="nc" id="L58">            return String.format(&quot;User %s has not played any games yet.&quot;, username);</span>
+        }
+
+<span class="nc" id="L61">        int totalScore = history.stream().mapToInt(GameResult::getTotalScore).sum();</span>
+<span class="nc" id="L62">        double avgScore = (double) totalScore / totalGames;</span>
+<span class="nc" id="L63">        GameResult bestGame = history.stream()</span>
+<span class="nc" id="L64">            .max((g1, g2) -&gt; Integer.compare(g1.getTotalScore(), g2.getTotalScore()))</span>
+<span class="nc" id="L65">            .get();</span>
+
+<span class="nc" id="L67">        return String.format(&quot;&quot;&quot;</span>
+            Stats for %s:
+            Total Games: %d
+            Average Score: %.2f
+            Best Game: %s
+            &quot;&quot;&quot;,
+<span class="nc" id="L73">            username, totalGames, avgScore, bestGame.getFormattedSummary()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -203,3 +203,85 @@ If you encounter issues:
    # Or use the mysql command (if available)
    mysql -h localhost -P 3306 -u root -p --ssl=0
    ```
+
+### Allowing Remote Connections to Your Docker MySQL Database
+
+To connect to your MySQL database running in Docker from another PC on the same network, follow these steps:
+
+1. **Configure MySQL Docker Container**
+   
+   If you need to recreate your Docker container with proper network settings:
+   ```bash
+   # Stop and remove existing container
+   docker stop mysql-container2
+   docker rm mysql-container2
+   
+   # Create new container with bind to all interfaces
+   docker run --name mysql-container2 \
+     -e MYSQL_ROOT_PASSWORD=your_password_here \
+     -p 0.0.0.0:3306:3306 \
+     -d mysql:8.4.4
+   ```
+
+2. **Configure Firewall to Allow MySQL Port**
+   ```bash
+   # For systems with ufw (Ubuntu, etc.)
+   sudo ufw allow 3306/tcp
+   
+   # For systems with firewalld (Fedora, CentOS, etc.)
+   sudo firewalld-cmd --permanent --add-port=3306/tcp
+   sudo firewalld-cmd --reload
+   
+   # For Arch Linux with iptables
+   sudo iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
+   sudo iptables-save | sudo tee /etc/iptables/iptables.rules
+   ```
+
+3. **Create a Remote User with Host %**
+   This is an important step. You need a user that can connect from any host:
+   ```sql
+   CREATE USER 'gorilla'@'%' IDENTIFIED BY 'gorilla';
+   GRANT ALL PRIVILEGES ON SNAKE_GAME.* TO 'gorilla'@'%';
+   FLUSH PRIVILEGES;
+   ```
+
+4. **Configure MySQL to Accept Remote Connections**
+   You may need to modify MySQL configuration to bind to all interfaces.
+   For a Docker container, this is usually already done, but you can verify with:
+   ```bash
+   docker exec -it mysql-container2 cat /etc/mysql/my.cnf
+   ```
+   
+   Look for `bind-address = 0.0.0.0` or `bind-address = *` or make sure it's not set to `127.0.0.1` only.
+
+5. **Test Remote Connection**
+   From another machine on the same network:
+   ```bash
+   mysql -h 192.168.0.214 -P 3306 -u gorilla -p
+   ```
+   When prompted, enter the password: `gorilla`
+
+6. **Update Client Configuration**
+   On the client machine, create a `config.properties` file with:
+   ```properties
+   db.url=jdbc:mysql://192.168.0.214:3306/SNAKE_GAME
+   db.username=gorilla
+   db.password=gorilla
+   ```
+
+7. **Troubleshooting Connection Issues**
+   If you can't connect:
+   - Check that the MySQL service is running: `docker ps | grep mysql-container2`
+   - Ensure your firewall is allowing the connection
+   - Verify network connectivity: `ping 192.168.0.214`
+   - Check MySQL logs: `docker logs mysql-container2`
+   - Try connecting locally first to ensure the user has proper permissions
+
+### Security Considerations
+- Using a password like 'gorilla' is only for development environments
+- For production:
+  - Use a strong password
+  - Consider using SSL for connections
+  - Limit user privileges to only what's needed
+  - Use a VPN if connecting over the internet
+  - Consider restricting the user to specific hosts rather than '%'

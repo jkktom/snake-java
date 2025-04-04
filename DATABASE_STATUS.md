@@ -85,9 +85,121 @@
 - Initial documentation created
 - Schema design completed
 
-## Troubleshooting Notes
-If connection fails:
-1. Check Docker container status
-2. Verify database exists
-3. Check user permissions
-4. Test connection with: `mysql -h localhost -P 3306 -u root -p` 
+## Step-by-Step Database Creation Guide
+
+### 1. Start Docker Container (if not running)
+```bash
+# Check if container is running
+docker ps | grep mysql-container2
+
+# If not running, start the container
+docker start mysql-container2
+
+# If container doesn't exist, create it
+docker run --name mysql-container2 -e MYSQL_ROOT_PASSWORD=your_password_here -p 3306:3306 -d mysql:8.4.4
+```
+
+### 2. Access MySQL Server
+```bash
+# Connect to MySQL server
+mysql -h localhost -P 3306 -u root -p
+# Enter your password when prompted
+```
+
+### 3. Create and Setup Database
+```sql
+-- Create database
+CREATE DATABASE snake_game;
+
+-- Switch to the new database
+USE snake_game;
+
+-- Create users table
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create game_results table
+CREATE TABLE game_results (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    food1_score INT NOT NULL,
+    food2_score INT NOT NULL,
+    obstacle_count INT NOT NULL,
+    game_duration BIGINT NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    was_ai_enabled BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Create comments table
+CREATE TABLE comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    game_result_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (game_result_id) REFERENCES game_results(id)
+);
+```
+
+### 4. Verify Setup
+```sql
+-- Show all tables
+SHOW TABLES;
+
+-- Verify table structures
+DESCRIBE users;
+DESCRIBE game_results;
+DESCRIBE comments;
+```
+
+### 5. Test Connections
+```bash
+# Test connection from command line
+mysql -h localhost -P 3306 -u root -p snake_game -e "SHOW TABLES;"
+
+# Expected output should show:
+# +---------------------+
+# | Tables_in_snake_game|
+# +---------------------+
+# | comments           |
+# | game_results       |
+# | users              |
+# +---------------------+
+```
+
+### 6. Update Application Configuration
+1. Modify `src/main/resources/config.properties`:
+```properties
+db.url=jdbc:mysql://localhost:3306/snake_game
+db.username=root
+db.password=your_password_here
+```
+
+2. Verify application connection:
+- Run the application
+- Check for successful database connection message
+- Try accessing the user management menu to verify database operations
+
+### Troubleshooting
+If you encounter issues:
+1. Verify Docker container status:
+   ```bash
+   docker ps | grep mysql-container2
+   ```
+2. Check MySQL logs:
+   ```bash
+   docker logs mysql-container2
+   ```
+3. Test direct connection:
+   ```bash
+   # If using MariaDB client (common on Linux distributions)
+   mariadb -h localhost -P 3306 -u root -p --ssl=0
+   # Or use the mysql command (if available)
+   mysql -h localhost -P 3306 -u root -p --ssl=0
+   ```

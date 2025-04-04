@@ -1,0 +1,81 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Crash dumps
+hs_err_pid*
+replay_pid*
+
+# IDE specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+.vscode/
+*.swp
+*.swo
+
+# Gradle
+.gradle/
+build/
+!gradle-wrapper.jar
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Database configurations (to avoid committing credentials)
+src/main/resources/config.properties
+*.properties.bak
+*.conf
+**/application-*.properties
+**/application-*.yml
+**/application.properties
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local environment files
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~
+
+# Output files
+out/
+bin/
+/dist/
+
+# Docker override files
+docker-compose.override.yml
+
+# MySQL config
+my.cnf 

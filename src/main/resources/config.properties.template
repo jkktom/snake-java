@@ -1,0 +1,17 @@
+# Database Configuration (TEMPLATE - DO NOT FILL IN ACTUAL CREDENTIALS)
+# Make a copy of this file named 'config.properties' and update with your settings
+
+# Database Connection
+db.url=jdbc:mysql://localhost:3306/WATCH_SHOP
+db.username=USERNAME
+db.password=PASSWORD
+
+# Connection Pool Settings
+db.connectionPool.maximumPoolSize=10
+db.connectionPool.minimumIdle=5
+db.connectionPool.idleTimeout=30000
+db.connectionPool.connectionTimeout=10000
+
+# Application Settings
+app.name=Snake Game
+app.version=1.0 
